@@ -46,6 +46,7 @@ executable ArcanoidHS-exe
   build-depends:
       ArcanoidHS
     , base >=4.7 && <5
+    , gloss
   default-language: Haskell2010
 
 test-suite ArcanoidHS-test
