@@ -24,3 +24,11 @@ windowOffsetY = 100
 -- Returns grey coefficient for background color
 bgGreyN :: Float
 bgGreyN = 0.4
+
+-- Returns range for ball direction random generator
+randRange :: (Float, Float)
+randRange = (-10, 10)
+
+-- Returns initial ball vertical speed
+initBallDirectionY :: Float
+initBallDirectionY = -5
