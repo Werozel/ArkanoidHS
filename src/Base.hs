@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 module Base where
 
 import Graphics.Gloss.Interface.Pure.Game
@@ -7,7 +8,7 @@ import Constants
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
-draw (GameState isPlaying view ballPos ballDirection platformPos level grid bricksLeft result) = Pictures [ball]
+draw GameState{..} = Pictures [ball]
   where
     ball = uncurry Translate ballPos (circleSolid ballRadius)
 
