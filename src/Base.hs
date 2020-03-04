@@ -11,7 +11,7 @@ draw :: GameState -> Picture
 draw GameState{..} = Pictures [ball, brick]
   where
     ball = uncurry Translate ballPos (circleSolid ballRadius)
-    brick = rectangleSolid 0 0
+    brick = Color black $ rectangleSolid brickLength brickHeight
 
 -- Handles incoming events
 eventHandler :: Event -> GameState -> GameState
