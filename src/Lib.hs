@@ -45,6 +45,3 @@ data GameState = GameState {
   bricksLeft :: Int, -- Bricks left to be removed
   result :: Result -- result of a game or NotFinished flag
 }
-
-
-
