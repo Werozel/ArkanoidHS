@@ -10,11 +10,12 @@ draw :: GameState -> Picture
 draw (GameState isPlaying view ballPos ballDirection platformPos level grid bricksLeft result) = Pictures [ball]
   where
     ball = uncurry Translate ballPos (circleSolid ballRadius)
-draw _ = Blank
+
 
 -- Handles incoming events
 eventHandler :: Event -> GameState -> GameState
 eventHandler _ state = state
+
 
 -- Changes game state with each tick
 tick :: Float -> GameState -> GameState

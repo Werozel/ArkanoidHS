@@ -25,7 +25,7 @@ data Result = Win | Lose | NoTime | NotFinished
 -- Current menu or level
 data View = MainMenu | ResultsMenu | SettingsMenu | Level
 
--- TODO Сделать нормально
+
 -- Game state data structure
 data GameState = GameState {
   isPlaying :: Bool, -- Flag indicates weather a game is in progress of waiting to be started
@@ -39,13 +39,16 @@ data GameState = GameState {
   result :: Result -- result of a game or NotFinished flag
 }
 
+
 -- Returns background color for window
 bgColor :: Color
 bgColor = greyN bgGreyN
 
+
 -- Returns window for the game
 window :: Display
 window = InWindow "Aracnoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
+
 
 -- Returns initial game state
 initState :: Float -> GameState
