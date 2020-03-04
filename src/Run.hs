@@ -12,16 +12,6 @@ import Base
 import LevelGenerator
 
 
--- Returns background color for window
-bgColor :: Color
-bgColor = greyN bgGreyN
-
--- Returns window for the game
-window :: Display
-window = InWindow "Aracnoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
-
-
-
 -- Returns initial game state
 initState :: Float -> GameState
 initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 (BricksGrid [] NoHit) 1 NotFinished
@@ -34,9 +24,6 @@ initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatf
 
     initPlatformPos :: Point
     initPlatformPos = (0, initPlatformPositionY)
-
-
-
 
 
 run :: IO()

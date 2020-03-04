@@ -32,16 +32,6 @@ windowOffsetY = 100
 bgGreyN :: Float
 bgGreyN = 0.4
 
--- Returns background color for window
-bgColor :: Color
-bgColor = greyN bgGreyN
-
-
--- Returns window for the game
-window :: Display
-window = InWindow "Aracnoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
-
-
 -- Returns speed coefficient for the ball
 speed :: Float
 speed = 3
@@ -72,7 +62,7 @@ brickHeight = 10
 
 -- Returns brick length
 brickLength :: Float
-brickLength = 10
+brickLength = 20
 
 -- Returns single hit count
 singleHit :: Int

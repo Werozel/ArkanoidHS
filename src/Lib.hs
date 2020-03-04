@@ -45,3 +45,13 @@ data GameState = GameState {
   bricksLeft :: Int, -- Bricks left to be removed
   result :: Result -- result of a game or NotFinished flag
 }
+
+
+-- Returns background color for window
+bgColor :: Color
+bgColor = greyN bgGreyN
+
+
+-- Returns window for the game
+window :: Display
+window = InWindow "Aracnoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
