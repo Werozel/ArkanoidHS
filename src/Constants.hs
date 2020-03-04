@@ -54,3 +54,16 @@ initPlatformPositionY = -50
 -- Returns ball radius
 ballRadius :: Float
 ballRadius = 6
+
+-- Returns brick height
+brickHeight :: Float
+brickHeight = 10
+
+-- Returns brick length
+brickLength :: Float
+brickLength = 10
+
+-- Returns single hit count
+singleHit :: Int
+singleHit = 1
+

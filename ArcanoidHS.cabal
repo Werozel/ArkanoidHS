@@ -31,6 +31,7 @@ library
       Run
       Constants
       Base
+      LevelGenerator
   other-modules:
       Paths_ArcanoidHS
   hs-source-dirs:

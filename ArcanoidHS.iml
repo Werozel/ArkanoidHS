@@ -43,6 +43,6 @@
     <orderEntry type="library" name="filepath-1.4.2.1" level="project" />
     <orderEntry type="library" name="process-1.6.7.0" level="project" />
     <orderEntry type="library" name="semigroups-0.19.1" level="project" />
-    <orderEntry type="library" name="unix-2.7.2.2" level="project" />
+    <orderEntry type="library" name="Win32-2.6.1.0" level="project" />
   </component>
 </module>
