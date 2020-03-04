@@ -8,10 +8,14 @@ import Constants
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
-draw GameState{..} = Pictures [ball, brick]
+draw GameState{..} = Pictures [ball, bricks]
   where
     ball = uncurry Translate ballPos (circleSolid ballRadius)
-    brick = Color black $ rectangleSolid brickLength brickHeight
+    bricks = Pictures
+
+
+drawBricks :: 
+
 
 -- Handles incoming events
 eventHandler :: Event -> GameState -> GameState
@@ -23,8 +27,8 @@ moveBall (x, y) (vx, vy) = (x + vx, y + vy)
 
 getBallDirection :: Hit -> Point -> Vector -> Vector
 getBallDirection hit ballPos ballDirection
-  | hit == LeftHit || hit == RightHit
-    || ballLeftBorder <= -windowHorizontalRadius || ballRightBorder >= windowHorizontalRadius
+  | hit == LeftHit || hit == RightHit 
+    || ballLeftBorder <= -windowHorizontalRadius || ballRightBorder >= windowHorizontalRadius 
       = (-(fst ballDirection), snd ballDirection)
   | hit == TopHit || hit == BottomHit || hit == PlatformHit
     || ballTopBorder >= windowVerticalRadius || ballBottomBorder <= -windowVerticalRadius
