@@ -17,7 +17,7 @@ data Brick = Brick {
 
 
 -- Types of ball hit
-data Hit = LeftHit | TopHit | RightHit | BottomHit | NoHit deriving Eq
+data Hit = LeftHit | TopHit | RightHit | BottomHit | NoHit | PlatformHit deriving Eq
 -- A single row from a grid
 type BricksGridRow = [Brick]
 -- All bricks

@@ -31,6 +31,7 @@ windowOffsetY = 100
 bgGreyN :: Float
 bgGreyN = 0.4
 
+-- Returns speed coefficient for the ball
 speed :: Float
 speed = 3
 

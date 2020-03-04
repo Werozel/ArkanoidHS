@@ -26,7 +26,7 @@ getBallDirection hit ballPos ballDirection
   | hit == LeftHit || hit == RightHit 
     || ballLeftBorder <= -windowHorizontalRadius || ballRightBorder >= windowHorizontalRadius 
       = (-(fst ballDirection), snd ballDirection)
-  | hit == TopHit || hit == BottomHit
+  | hit == TopHit || hit == BottomHit || hit == PlatformHit
     || ballTopBorder >= windowVerticalRadius || ballBottomBorder <= -windowVerticalRadius
       = (fst ballDirection, -(snd ballDirection))
   | otherwise = ballDirection
