@@ -16,17 +16,24 @@ data Brick = Brick {
 }
 
 
+-- Types of ball hit
+data Hit = LeftHit | TopHit | RightHit | BottomHit | NoHit deriving Eq
 -- A single row from a grid
 type BricksGridRow = [Brick]
 -- All bricks
-type BricksGrid = [BricksGridRow]
+data BricksGrid = BricksGrid {
+  bricks :: [BricksGridRow],
+  lastHit :: Hit
+}
 -- Result of a game
 data Result = Win | Lose | NoTime | NotFinished
 -- Current menu or level
-data View = MainMenu | ResultsMenu | SettingsMenu | Level
+data View = MainMenu | ResultsMenu | SettingsMenu | LevelView
+
 
 
 -- Game state data structure
+-- Point = (Float, Float)
 data GameState = GameState {
   isPlaying :: Bool, -- Flag indicates weather a game is in progress of waiting to be started
   view :: View, -- Specifies what state has the window
@@ -52,7 +59,7 @@ window = InWindow "Aracnoid" (windowWidth, windowHeight) (windowOffsetX, windowO
 
 -- Returns initial game state
 initState :: Float -> GameState
-initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 [] 0 NotFinished
+initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 (BricksGrid [] NoHit) 1 NotFinished
   where
     initBallPos :: Point
     initBallPos = (0, initBallPositionY)

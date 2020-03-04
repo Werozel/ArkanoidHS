@@ -6,12 +6,18 @@ fps :: Int
 fps = 60
 
 -- Returns width for window
+windowWidthFloat :: Float
+windowWidthFloat = 400
+
 windowWidth :: Int
-windowWidth = 600
+windowWidth = 400
 
 -- Returns height for window
+windowHeightFloat :: Float
+windowHeightFloat = 600
+
 windowHeight :: Int
-windowHeight = 400
+windowHeight = 600
 
 -- Returns horizontal offset for window
 windowOffsetX :: Int
@@ -25,13 +31,16 @@ windowOffsetY = 100
 bgGreyN :: Float
 bgGreyN = 0.4
 
+speed :: Float
+speed = 3
+
 -- Returns range for ball horizontal direction random generator
 randRange :: (Float, Float)
-randRange = (-10, 10)
+randRange = (-2 * speed, 2 * speed)
 
 -- Returns initial ball vertical speed
 initBallDirectionY :: Float
-initBallDirectionY = -5
+initBallDirectionY = 1 * speed
 
 -- Returns initial ball vertical position
 initBallPositionY :: Float
@@ -43,4 +52,4 @@ initPlatformPositionY = -50
 
 -- Returns ball radius
 ballRadius :: Float
-ballRadius = 10
+ballRadius = 6
