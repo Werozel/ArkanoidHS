@@ -3,12 +3,13 @@ module Base where
 import Graphics.Gloss.Interface.Pure.Game
 
 import Lib
+import Constants
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
 draw (GameState isPlaying view ballPos ballDirection platformPos level grid bricksLeft result) = Pictures [ball]
   where
-    ball = uncurry Translate ballPos (circleSolid 10)
+    ball = uncurry Translate ballPos (circleSolid ballRadius)
 draw _ = Blank
 
 -- Handles incoming events
