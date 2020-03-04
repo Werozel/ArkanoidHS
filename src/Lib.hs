@@ -51,7 +51,7 @@ initState :: Float -> GameState
 initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 [] 0 NotFinished
   where
     initBallPos :: Point
-    initBallPos = (0, 0)
+    initBallPos = (0, -150)
 
     initBallDirection :: Point
     initBallDirection = (rnd, initBallDirectionY)

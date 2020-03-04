@@ -11,9 +11,6 @@ import Constants
 import Base
 
 run :: IO()
-run =
-  play window bgColor fps (initState rnd) draw eventHandler tick
-    where
-      gen = getStdGen
-      -- FIXME do a random generator
-      rnd = 0
+run = do
+  gen <- getStdGen
+  play window bgColor fps (initState (fst (randomR randRange gen))) draw eventHandler tick
