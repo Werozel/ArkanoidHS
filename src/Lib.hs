@@ -11,6 +11,7 @@ import Constants
 -- Brick data structure
 data Brick = Brick {
   position :: Point,
+  size :: Point,
   hitsLeft :: Int
 }
 
@@ -51,13 +52,13 @@ initState :: Float -> GameState
 initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 [] 0 NotFinished
   where
     initBallPos :: Point
-    initBallPos = (0, 0)
+    initBallPos = (0, initBallPositionY)
 
     initBallDirection :: Point
     initBallDirection = (rnd, initBallDirectionY)
 
     initPlatformPos :: Point
-    initPlatformPos = (0, -50)
+    initPlatformPos = (0, initPlatformPositionY)
 
 
 
