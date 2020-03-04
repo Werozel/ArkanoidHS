@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: ad5f0eaefb03971fb0b20bae91c7b9c9d5f2b3939a78625fbfc57ef11e73c0d1
+-- hash: 352e75d97285d6c75f562df3f3a3ac2c245218f85aac71f435f722a0233f954c
 
 name:           ArcanoidHS
 version:        0.1.0.0
@@ -28,12 +28,16 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Run
+      Constants
+      Base
   other-modules:
       Paths_ArcanoidHS
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      base >=4.7 && <5,
+      gloss
   default-language: Haskell2010
 
 executable ArcanoidHS-exe
@@ -46,7 +50,6 @@ executable ArcanoidHS-exe
   build-depends:
       ArcanoidHS
     , base >=4.7 && <5
-    , gloss
   default-language: Haskell2010
 
 test-suite ArcanoidHS-test
