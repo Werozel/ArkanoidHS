@@ -14,6 +14,7 @@ draw GameState{..} = Pictures [ball, bricks, platform]
     ball = uncurry Translate ballPos (circleSolid ballRadius)
     platform = uncurry Translate platformPos (rectangleSolid platformLength platformHeight)
     bricks = drawGrid grid
+    walls = Pictures [Line (- windowWidthFloat / 2) (windowHeightFloat / 2)]
 
 
 -- Draws full blocks grid
