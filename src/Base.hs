@@ -33,6 +33,10 @@ drawBricksRow _ = Pictures [Blank]
 
 -- Handles incoming events
 eventHandler :: Event -> GameState -> GameState
+eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
+  | key == KeyLeft = state {keyPressed = if keyState == Down then LeftPressed else NonePressed}
+  | key == KeyRight = state {keyPressed = if keyState == Down then RightPressed else NonePressed}
+  | otherwise = state
 eventHandler _ state = state
 
 
@@ -63,8 +67,8 @@ detectHit _ g = g
 
 -- Changes game state with each tick
 tick :: Float -> GameState -> GameState
-tick _ GameState{..} | bricksLeft == 0 = GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win
-                     | otherwise = GameState isPlaying view newBallPos newBallDirection platformPos level newGrid bricksLeftUpdated newResult
+tick _ GameState{..} | bricksLeft == 0 = GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win NonePressed
+                     | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keyPressed
                       where
                         newBallPos = moveBall ballPos ballDirection
                         newGrid = detectHit newBallPos grid
@@ -74,4 +78,9 @@ tick _ GameState{..} | bricksLeft == 0 = GameState False LevelView ballPos (0, 0
                         newBallDirection = getBallDirection hit newBallPos ballDirection
                         newResult | bricksLeftUpdated == 0 = Win
                                | otherwise = NotFinished
+                        newPlatformPos | keyPressed == LeftPressed = (max ((-windowWidthFloat + platformLength) / 2) 
+                                         (fst platformPos - (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)
+                                       | keyPressed == RightPressed = (min ((windowWidthFloat - platformLength) / 2) 
+                                         (fst platformPos + (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)
+                                       | otherwise = platformPos
                                -- TODO Добавить Lose
