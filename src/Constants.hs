@@ -50,7 +50,15 @@ initBallPositionY = -150
 
 -- Returns initial ball vertical position
 initPlatformPositionY :: Float
-initPlatformPositionY = -50
+initPlatformPositionY = -250
+
+-- Returns platform length
+platformLength :: Float
+platformLength = 100
+
+-- Returns platform height
+platformHeight :: Float
+platformHeight = 10
 
 -- Returns ball radius
 ballRadius :: Float

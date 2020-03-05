@@ -8,9 +8,10 @@ import Constants
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
-draw GameState{..} = Pictures [ball, bricks]
+draw GameState{..} = Pictures [ball, bricks, platform]
   where
     ball = uncurry Translate ballPos (circleSolid ballRadius)
+    platform = uncurry Translate platformPos (rectangleSolid platformLength platformHeight)
     bricks = drawGrid grid
 
 
