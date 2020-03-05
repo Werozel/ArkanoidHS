@@ -64,6 +64,10 @@ platformLength = 100
 platformHeight :: Float
 platformHeight = 10
 
+-- Returns walls width
+wallsWidth :: Float
+wallsWidth = 5
+
 -- Returns ball radius
 ballRadius :: Float
 ballRadius = 6

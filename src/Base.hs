@@ -9,12 +9,16 @@ import Service
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
-draw GameState{..} = Pictures [ball, bricks, platform]
+draw GameState {..} = Pictures [ball, bricks, platform, walls]
   where
     ball = uncurry Translate ballPos (circleSolid ballRadius)
     platform = uncurry Translate platformPos (rectangleSolid platformLength platformHeight)
     bricks = drawGrid grid
-    walls = Pictures [Line (- windowWidthFloat / 2) (windowHeightFloat / 2)]
+    walls = Pictures [
+      Translate 0 (windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
+      Translate 0 (- windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
+      Translate ((- windowWidthFloat) / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat),
+      Translate (windowWidthFloat / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat)]
 
 
 -- Draws full blocks grid
@@ -100,7 +104,7 @@ checkHitRow currPos (brick@Brick{..} : xs)
                                  | otherwise = CheckHitResult (newBrick : xs) resHit
                           where
                             resHit = checkHit currPos brick
-                            newBrick = if hitsLeft == 1 then NoBrick else Brick position size (hitsLeft - 1)
+                            newBrick = if hitsLeft <= 1 then NoBrick else Brick position size (hitsLeft - 1)
                             CheckHitResult resRow resHitRow = checkHitRow currPos xs
 
 
