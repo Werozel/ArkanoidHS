@@ -13,7 +13,7 @@ data Brick = Brick {
   position :: Point,
   size :: Point,
   hitsLeft :: Int
-}
+} | NoBrick
 
 
 -- Types of ball hit

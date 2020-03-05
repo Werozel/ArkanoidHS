@@ -15,6 +15,7 @@ draw GameState{..} = Pictures [ball, bricks, platform]
     bricks = drawGrid grid
 
 
+-- Draws full blocks grid
 drawGrid :: BricksGrid -> Picture
 drawGrid BricksGrid{..} = drawBricks bricks
 
@@ -23,7 +24,9 @@ drawBricks (row:xs) = Pictures [drawBricksRow row, drawBricks xs]
 drawBricks _ = Pictures [Blank]
 
 
+-- Draws one bricks row
 drawBricksRow :: BricksGridRow -> Picture
+drawBricksRow (NoBrick:xs) = Pictures [drawBricksRow xs]
 drawBricksRow (Brick {..}:xs) = Pictures [uncurry Translate position (uncurry rectangleSolid size), drawBricksRow xs]
 drawBricksRow _ = Pictures [Blank]
 
@@ -36,6 +39,7 @@ eventHandler _ state = state
 moveBall :: Point -> Vector -> Point
 moveBall (x, y) (vx, vy) = (x + vx, y + vy)
 
+-- FIXME Бесконечно ударяется о верхнюю границу
 getBallDirection :: Hit -> Point -> Vector -> Vector
 getBallDirection hit ballPos ballDirection
   | hit == LeftHit || hit == RightHit 
