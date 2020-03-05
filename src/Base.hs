@@ -82,10 +82,10 @@ checkHit (x, y) Brick{..} | leftBorder <= x && x <= rightBorder &&
                             ballLeft < rightBorder && ballRight > rightBorder = RightHit
                           | otherwise = NoHit
         where
-          leftBorder = fst position - fst size
-          rightBorder = fst position + fst size
-          topBorder = snd position + snd size
-          bottomBorder = snd position - snd size
+          leftBorder = fst position - fst size / 2
+          rightBorder = fst position + fst size / 2
+          topBorder = snd position + snd size / 2
+          bottomBorder = snd position - snd size / 2
           ballTop = y + ballRadius
           ballBottom = y - ballRadius
           ballLeft = x - ballRadius
@@ -94,20 +94,23 @@ checkHit (x, y) Brick{..} | leftBorder <= x && x <= rightBorder &&
 
 checkHitRow :: Point -> BricksGridRow -> CheckHitResult
 checkHitRow _ [] = CheckHitResult [] NoHit
-checkHitRow currPos (brick@(Brick pos size hitsLeft) : xs) | resHit == NoHit = checkHitRow currPos xs
+checkHitRow currPos (brick@Brick{..} : xs) 
+                                 | resHit == NoHit = CheckHitResult (brick : resRow) resHitRow
                                  | otherwise = CheckHitResult (newBrick : xs) resHit
                           where
                             resHit = checkHit currPos brick
-                            newBrick = if hitsLeft == 1 then NoBrick else Brick pos size (hitsLeft - 1)
+                            newBrick = if hitsLeft == 1 then NoBrick else Brick position size (hitsLeft - 1)
+                            CheckHitResult resRow resHitRow = checkHitRow currPos xs
 
 
 
 detectHit :: Point -> [BricksGridRow] -> BricksGrid
 detectHit _ [] = BricksGrid [] NoHit
-detectHit currPos (row: xs) | resHit == NoHit = detectHit currPos xs
+detectHit currPos (row: xs) | resHit == NoHit = BricksGrid (row : bricks) lastHit
                             | otherwise = BricksGrid (resRow : xs) resHit
                               where
                                 CheckHitResult resRow resHit = checkHitRow currPos row
+                                BricksGrid bricks lastHit = detectHit currPos xs
 
 
 checkAndMovePlatform :: GameState -> Point
