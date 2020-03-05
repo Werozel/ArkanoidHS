@@ -31,6 +31,7 @@ data Result = Win | Lose | NoTime | NotFinished
 data View = MainMenu | ResultsMenu | SettingsMenu | LevelView
 
 data KeyPressed = LeftPressed | RightPressed | NonePressed deriving Eq
+type KeysPressed = [KeyPressed]
 
 -- Game state data structure
 -- Point = (Float, Float)
@@ -44,7 +45,7 @@ data GameState = GameState {
   grid :: BricksGrid, -- Bricks layout
   bricksLeft :: Int, -- Bricks left to be removed
   result :: Result, -- result of a game or NotFinished flag
-  keyPressed :: KeyPressed -- Key that is pressed at the moment 
+  keysPressed :: KeysPressed -- Key that is pressed at the moment
 }
 
 -- Returns background color for window

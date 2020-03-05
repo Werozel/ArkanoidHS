@@ -14,7 +14,7 @@ import LevelGenerator
 
 -- Returns initial game state
 initState :: Float -> GameState
-initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 initGrid 1 NotFinished NonePressed
+initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 initGrid 1 NotFinished [NonePressed]
   where
     initBallPos :: Point
     initBallPos = (0, initBallPositionY)
