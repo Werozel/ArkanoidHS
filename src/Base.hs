@@ -113,6 +113,9 @@ checkHitRow currPos (brick@Brick{..} : xs)
                             resHit = checkHit currPos brick
                             newBrick = if hitsLeft <= 1 then NoBrick else Brick position size (hitsLeft - 1)
                             CheckHitResult resRow resHitRow = checkHitRow currPos xs
+checkHitRow currPos (brick@NoBrick : xs) = CheckHitResult (brick : resRow) resHitRow
+                                          where
+                                            CheckHitResult resRow resHitRow = checkHitRow currPos xs
 
 
 
@@ -123,6 +126,9 @@ detectHit currPos (row: xs) | resHit == NoHit = BricksGrid (row : bricks) lastHi
                               where
                                 CheckHitResult resRow resHit = checkHitRow currPos row
                                 BricksGrid bricks lastHit = detectHit currPos xs
+
+blankDetectHit :: Point -> [BricksGridRow] -> BricksGrid
+blankDetectHit pos rows = BricksGrid rows NoHit
 
 
 checkAndMovePlatform :: GameState -> Point
@@ -141,16 +147,25 @@ checkAndMovePlatformRight state@GameState{..}
       (fst platformPos + (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)}
   | otherwise = state
 
+getRemainingBricksCountRow :: BricksGridRow -> Int
+getRemainingBricksCountRow [] = 0
+getRemainingBricksCountRow (NoBrick : xs) = getRemainingBricksCountRow xs
+getRemainingBricksCountRow _ = 1
+
+getRemainingBricksCount :: BricksGrid -> Int
+getRemainingBricksCount (BricksGrid [] hit) = 0
+getRemainingBricksCount (BricksGrid (row : xs) hit) = getRemainingBricksCountRow row + getRemainingBricksCount (BricksGrid xs hit)
 
 -- Changes game state with each tick
-tick :: Float -> GameState -> GameState
-tick _ state@GameState{..} | bricksLeft == 0 = GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
+tick ::Float -> GameState -> GameState
+tick _ state@GameState{..} | bricksLeft == 0 =
+                              GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
                      | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
                       where
                         newBallPos = moveBall ballPos ballDirection
                         newGrid = detectHit newBallPos (bricks grid)
                         hit = lastHit newGrid
-                        bricksLeftUpdated = countRemainingBlocks (bricks grid)
+                        bricksLeftUpdated = getRemainingBricksCount newGrid
                         newBallDirection = getBallDirection hit newBallPos ballDirection
                         newResult | bricksLeftUpdated == 0 = Win
                                | otherwise = NotFinished
