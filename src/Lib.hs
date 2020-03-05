@@ -25,6 +25,7 @@ data BricksGrid = BricksGrid {
   bricks :: [BricksGridRow],
   lastHit :: Hit
 }
+
 -- Result of a game
 data Result = Win | Lose | NoTime | NotFinished
 -- Current menu or level

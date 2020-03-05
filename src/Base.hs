@@ -57,8 +57,51 @@ getBallDirection hit ballPos ballDirection
     windowHorizontalRadius = windowWidthFloat / 2
     windowVerticalRadius = windowHeightFloat / 2
 
-detectHit :: Point -> BricksGrid -> BricksGrid
-detectHit _ g = g
+
+data CheckHitResult = CheckHitResult {
+  row :: BricksGridRow,
+  hit :: Hit
+}
+
+
+checkHit :: Point -> Brick -> Hit
+checkHit (x, y) Brick{..} | leftBorder <= x && x <= rightBorder &&
+                            ballTop > topBorder && ballBottom < topBorder = TopHit
+                          | leftBorder <= x && x <= rightBorder &&
+                            ballTop > bottomBorder && ballBottom < bottomBorder = BottomHit
+                          | bottomBorder <= y && y <= topBorder &&
+                            ballLeft < leftBorder && ballRight > leftBorder = LeftHit
+                          | bottomBorder <= y && y <= topBorder &&
+                            ballLeft < rightBorder && ballRight > rightBorder = RightHit
+                          | otherwise = NoHit
+        where
+          leftBorder = fst position - fst size
+          rightBorder = fst position + fst size
+          topBorder = snd position + snd size
+          bottomBorder = snd position - snd size
+          ballTop = y + ballRadius
+          ballBottom = y - ballRadius
+          ballLeft = x - ballRadius
+          ballRight = x + ballRadius
+
+
+checkHitRow :: Point -> BricksGridRow -> CheckHitResult
+checkHitRow _ [] = CheckHitResult [] NoHit
+checkHitRow currPos (brick@(Brick pos size hitsLeft) : xs) | resHit == NoHit = checkHitRow currPos xs
+                                 | otherwise = CheckHitResult (newBrick : xs) resHit
+                          where
+                            resHit = checkHit currPos brick
+                            newBrick = if hitsLeft == 1 then NoBrick else Brick pos size (hitsLeft - 1)
+
+
+
+detectHit :: Point -> [BricksGridRow] -> BricksGrid
+detectHit _ [] = BricksGrid [] NoHit
+detectHit currPos (row: xs) | resHit == NoHit = detectHit currPos xs
+                            | otherwise = BricksGrid (resRow : xs) resHit
+                              where
+                                CheckHitResult resRow resHit = checkHitRow currPos row
+
 
 
 -- Changes game state with each tick
@@ -67,7 +110,7 @@ tick _ GameState{..} | bricksLeft == 0 = GameState False LevelView ballPos (0, 0
                      | otherwise = GameState isPlaying view newBallPos newBallDirection platformPos level newGrid bricksLeftUpdated newResult
                       where
                         newBallPos = moveBall ballPos ballDirection
-                        newGrid = detectHit newBallPos grid
+                        newGrid = detectHit newBallPos (bricks grid)
                         hit = lastHit newGrid
                         bricksLeftUpdated | hit == NoHit = bricksLeft
                                           | otherwise = bricksLeft - 1
