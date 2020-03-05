@@ -36,6 +36,10 @@ bgGreyN = 0.4
 speed :: Float
 speed = 3
 
+-- Returns speed coefficient for the platform
+platformSpeed :: Float
+platformSpeed = 200
+
 -- Returns range for ball horizontal direction random generator
 randRange :: (Float, Float)
 randRange = (-2 * speed, 2 * speed)

@@ -5,6 +5,7 @@ import Graphics.Gloss.Interface.Pure.Game
 
 import Lib
 import Constants
+import Service
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
@@ -33,7 +34,13 @@ drawBricksRow _ = Pictures [Blank]
 
 -- Handles incoming events
 eventHandler :: Event -> GameState -> GameState
+eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
+  | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else removeFromList keysPressed LeftPressed}
+  | key == KeyRight = state {keysPressed = if keyState == Down then RightPressed:keysPressed else removeFromList keysPressed RightPressed}
+  | otherwise = state
 eventHandler _ state = state
+
+
 
 
 moveBall :: Point -> Vector -> Point
@@ -103,11 +110,30 @@ detectHit currPos (row: xs) | resHit == NoHit = detectHit currPos xs
                                 CheckHitResult resRow resHit = checkHitRow currPos row
 
 
+checkAndMovePlatform :: GameState -> Point
+checkAndMovePlatform state = platformPos (checkAndMovePlatformRight (checkAndMovePlatformLeft state))
+
+
+checkAndMovePlatformLeft :: GameState -> GameState
+checkAndMovePlatformLeft state@GameState{..}
+  | elemInList keysPressed LeftPressed = state{platformPos = (max ((-windowWidthFloat + platformLength) / 2)
+      (fst platformPos - (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)}
+  | otherwise = state
+
+checkAndMovePlatformRight :: GameState -> GameState
+checkAndMovePlatformRight state@GameState{..}
+  | elemInList keysPressed RightPressed = state{platformPos = (min ((windowWidthFloat - platformLength) / 2)
+      (fst platformPos + (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)}
+  | otherwise = state
+
+detectHit :: Point -> BricksGrid -> BricksGrid
+detectHit _ g = g
+
 
 -- Changes game state with each tick
 tick :: Float -> GameState -> GameState
-tick _ GameState{..} | bricksLeft == 0 = GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win
-                     | otherwise = GameState isPlaying view newBallPos newBallDirection platformPos level newGrid bricksLeftUpdated newResult
+tick _ state@GameState{..} | bricksLeft == 0 = GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
+                     | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
                       where
                         newBallPos = moveBall ballPos ballDirection
                         newGrid = detectHit newBallPos (bricks grid)
@@ -117,4 +143,5 @@ tick _ GameState{..} | bricksLeft == 0 = GameState False LevelView ballPos (0, 0
                         newBallDirection = getBallDirection hit newBallPos ballDirection
                         newResult | bricksLeftUpdated == 0 = Win
                                | otherwise = NotFinished
+                        newPlatformPos = checkAndMovePlatform state
                                -- TODO Добавить Lose
