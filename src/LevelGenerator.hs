@@ -6,6 +6,6 @@ import Constants
 
 generateLevel :: Int -> BricksGrid
 generateLevel difficult = BricksGrid
-                  [[Brick (-150, 100) (brickLength, brickHeight) singleHit,
-                   Brick (0, 100.0) (brickLength, brickHeight) 1,
-                   Brick (150, 100.0) (brickLength, brickHeight) 1]] NoHit
+                  [[Brick (-150, 100) (brickLength, brickHeight) 3,
+                   Brick (0, 100.0) (brickLength, brickHeight) 3,
+                   Brick (150, 100.0) (brickLength, brickHeight) 3]] NoHit

@@ -26,6 +26,9 @@ data BricksGrid = BricksGrid {
   lastHit :: Hit
 }
 
+--countRemainingBlocks :: BricksGrid -> Int
+--countRemainingBlocks grid@BricksGrid (brickRow:xs) hit = 1
+
 -- Result of a game
 data Result = Win | Lose | NoTime | NotFinished
 -- Current menu or level

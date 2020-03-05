@@ -33,8 +33,15 @@ drawBricks _ = Pictures [Blank]
 -- Draws one bricks row
 drawBricksRow :: BricksGridRow -> Picture
 drawBricksRow (NoBrick:xs) = Pictures [drawBricksRow xs]
-drawBricksRow (Brick {..}:xs) = Pictures [uncurry Translate position (uncurry rectangleSolid size), drawBricksRow xs]
+drawBricksRow (brick@Brick {..}:xs) = Pictures [Color (getBrickColor brick) $ uncurry Translate position (uncurry rectangleSolid size), drawBricksRow xs]
 drawBricksRow _ = Pictures [Blank]
+
+
+getBrickColor :: Brick -> Color
+getBrickColor brick@Brick{..} = newColor
+  where newColor | hitsLeft == 1 = yellow
+                 | hitsLeft == 2 = orange
+                 | hitsLeft == 3 = dark red
 
 
 -- Handles incoming events
