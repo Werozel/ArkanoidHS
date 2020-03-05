@@ -126,9 +126,6 @@ checkAndMovePlatformRight state@GameState{..}
       (fst platformPos + (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)}
   | otherwise = state
 
-detectHit :: Point -> BricksGrid -> BricksGrid
-detectHit _ g = g
-
 
 -- Changes game state with each tick
 tick :: Float -> GameState -> GameState
