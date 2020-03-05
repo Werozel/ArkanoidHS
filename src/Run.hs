@@ -14,7 +14,7 @@ import LevelGenerator
 
 -- Returns initial game state
 initState :: Float -> GameState
-initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 (BricksGrid [] NoHit) 1 NotFinished
+initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 initGrid 1 NotFinished
   where
     initBallPos :: Point
     initBallPos = (0, initBallPositionY)
@@ -24,6 +24,8 @@ initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatf
 
     initPlatformPos :: Point
     initPlatformPos = (0, initPlatformPositionY)
+    
+    initGrid = generateLevel 1
 
 
 run :: IO()

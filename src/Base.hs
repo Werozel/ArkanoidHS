@@ -11,10 +11,20 @@ draw :: GameState -> Picture
 draw GameState{..} = Pictures [ball, bricks]
   where
     ball = uncurry Translate ballPos (circleSolid ballRadius)
-    bricks = Pictures
+    bricks = drawGrid grid
 
 
-drawBricks :: 
+drawGrid :: BricksGrid -> Picture
+drawGrid BricksGrid{..} = drawBricks bricks
+
+drawBricks :: [[Brick]] -> Picture
+drawBricks (row:xs) = Pictures [drawBricksRow row, drawBricks xs]
+drawBricks _ = Pictures [Blank]
+
+
+drawBricksRow :: BricksGridRow -> Picture
+drawBricksRow (Brick {..}:xs) = Pictures [uncurry Translate position (uncurry rectangleSolid size), drawBricksRow xs]
+drawBricksRow _ = Pictures [Blank]
 
 
 -- Handles incoming events

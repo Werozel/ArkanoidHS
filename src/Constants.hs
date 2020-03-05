@@ -58,11 +58,11 @@ ballRadius = 6
 
 -- Returns brick height
 brickHeight :: Float
-brickHeight = 10
+brickHeight = 25
 
 -- Returns brick length
 brickLength :: Float
-brickLength = 20
+brickLength = 70
 
 -- Returns single hit count
 singleHit :: Int

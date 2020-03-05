@@ -46,7 +46,6 @@ data GameState = GameState {
   result :: Result -- result of a game or NotFinished flag
 }
 
-
 -- Returns background color for window
 bgColor :: Color
 bgColor = greyN bgGreyN
