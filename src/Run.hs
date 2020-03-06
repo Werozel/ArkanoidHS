@@ -1,3 +1,4 @@
+{-# LANGUAGE RecordWildCards #-}
 module Run
   ( run
   ) where
@@ -26,6 +27,38 @@ initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatf
     initPlatformPos = (0, initPlatformPositionY)
     
     initGrid = generateLevel 1
+
+
+-- Changes game state with each tick
+tick ::Float -> GameState -> GameState
+tick _ state@GameState{..} | bricksLeft == 0 =
+                              GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
+                     | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
+                      where
+                        newBallPos = moveBall ballPos ballDirection
+                        newGrid = detectHit newBallPos (bricks grid)
+                        hit = lastHit newGrid
+                        bricksLeftUpdated = getRemainingBricksCount newGrid
+                        newBallDirection = getBallDirection hit newBallPos ballDirection
+                        newResult | bricksLeftUpdated == 0 = Win
+                               | otherwise = NotFinished
+                        newPlatformPos = checkAndMovePlatform state
+                               -- TODO Добавить Lose
+                               -- TODO Добавить выталкивание мяча
+                               
+                               
+-- Draws picture in window for current game state
+draw :: GameState -> Picture
+draw GameState {..} = Pictures [ball, bricks, platform, walls]
+  where
+    ball = uncurry Translate ballPos (circleSolid ballRadius)
+    platform = uncurry Translate platformPos (rectangleSolid platformLength platformHeight)
+    bricks = drawGrid grid
+    walls = Pictures [
+      Translate 0 (windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
+      Translate 0 (- windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
+      Translate ((- windowWidthFloat) / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat),
+      Translate (windowWidthFloat / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat)]
 
 
 run :: IO()

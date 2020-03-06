@@ -26,16 +26,6 @@ data BricksGrid = BricksGrid {
   lastHit :: Hit
 }
 
-countRemainingBlocks :: [[Brick]] -> Int
-countRemainingBlocks = foldr ((+) . countRemainingBlocksInRow) 0
-
-
-countRemainingBlocksInRow :: [Brick] -> Int
-countRemainingBlocksInRow (brick:xs) = this + countRemainingBlocksInRow xs
-  where this | hitsLeft brick > 0 = 1
-             | otherwise = 0
-countRemainingBlocksInRow [] = 0
-
 -- Result of a game
 data Result = Win | Lose | NoTime | NotFinished
 -- Current menu or level
@@ -67,3 +57,4 @@ bgColor = greyN bgGreyN
 -- Returns window for the game
 window :: Display
 window = InWindow "Aracnoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
+

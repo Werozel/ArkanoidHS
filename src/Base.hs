@@ -7,19 +7,6 @@ import Lib
 import Constants
 import Service
 
--- Draws picture in window for current game state
-draw :: GameState -> Picture
-draw GameState {..} = Pictures [ball, bricks, platform, walls]
-  where
-    ball = uncurry Translate ballPos (circleSolid ballRadius)
-    platform = uncurry Translate platformPos (rectangleSolid platformLength platformHeight)
-    bricks = drawGrid grid
-    walls = Pictures [
-      Translate 0 (windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
-      Translate 0 (- windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
-      Translate ((- windowWidthFloat) / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat),
-      Translate (windowWidthFloat / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat)]
-
 
 -- Draws full blocks grid
 drawGrid :: BricksGrid -> Picture
@@ -56,7 +43,20 @@ eventHandler _ state = state
 
 
 moveBall :: Point -> Vector -> Point
-moveBall (x, y) (vx, vy) = (x + vx, y + vy)
+moveBall (x, y) (vx, vy) = (newX, newY)
+  where
+    leftWindowBorder = - windowWidthFloat / 2
+    rightWindowBorder = windowWidthFloat / 2
+    topWindowBorder = windowHeightFloat / 2
+    bottomWindowBorder = - windowHeightFloat / 2
+    newX | vx < 0 = max leftWindowBorder (x + vx)
+         | vx > 0 = min rightWindowBorder (x + vx)
+         | otherwise = x + vx
+    newY | vy < 0 = max bottomWindowBorder (y + vy)
+         | vy > 0 = min topWindowBorder (y + vy)
+         | otherwise = y + vy
+
+
 
 -- FIXME Бесконечно ударяется о верхнюю границу
 getBallDirection :: Hit -> Point -> Vector -> Vector
@@ -155,20 +155,3 @@ getRemainingBricksCountRow _ = 1
 getRemainingBricksCount :: BricksGrid -> Int
 getRemainingBricksCount (BricksGrid [] hit) = 0
 getRemainingBricksCount (BricksGrid (row : xs) hit) = getRemainingBricksCountRow row + getRemainingBricksCount (BricksGrid xs hit)
-
--- Changes game state with each tick
-tick ::Float -> GameState -> GameState
-tick _ state@GameState{..} | bricksLeft == 0 =
-                              GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
-                     | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
-                      where
-                        newBallPos = moveBall ballPos ballDirection
-                        newGrid = detectHit newBallPos (bricks grid)
-                        hit = lastHit newGrid
-                        bricksLeftUpdated = getRemainingBricksCount newGrid
-                        newBallDirection = getBallDirection hit newBallPos ballDirection
-                        newResult | bricksLeftUpdated == 0 = Win
-                               | otherwise = NotFinished
-                        newPlatformPos = checkAndMovePlatform state
-                               -- TODO Добавить Lose
-                               -- TODO Добавить выталкивание мяча
