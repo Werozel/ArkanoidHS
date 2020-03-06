@@ -26,8 +26,15 @@ data BricksGrid = BricksGrid {
   lastHit :: Hit
 }
 
---countRemainingBlocks :: BricksGrid -> Int
---countRemainingBlocks grid@BricksGrid (brickRow:xs) hit = 1
+countRemainingBlocks :: [[Brick]] -> Int
+countRemainingBlocks = foldr ((+) . countRemainingBlocksInRow) 0
+
+
+countRemainingBlocksInRow :: [Brick] -> Int
+countRemainingBlocksInRow (brick:xs) = this + countRemainingBlocksInRow xs
+  where this | hitsLeft brick > 0 = 1
+             | otherwise = 0
+countRemainingBlocksInRow [] = 0
 
 -- Result of a game
 data Result = Win | Lose | NoTime | NotFinished

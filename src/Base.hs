@@ -150,8 +150,7 @@ tick _ state@GameState{..} | bricksLeft == 0 = GameState False LevelView ballPos
                         newBallPos = moveBall ballPos ballDirection
                         newGrid = detectHit newBallPos (bricks grid)
                         hit = lastHit newGrid
-                        bricksLeftUpdated | hit == NoHit = bricksLeft
-                                          | otherwise = bricksLeft - 1
+                        bricksLeftUpdated = countRemainingBlocks (bricks grid)
                         newBallDirection = getBallDirection hit newBallPos ballDirection
                         newResult | bricksLeftUpdated == 0 = Win
                                | otherwise = NotFinished
