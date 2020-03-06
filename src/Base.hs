@@ -171,3 +171,4 @@ tick _ state@GameState{..} | bricksLeft == 0 =
                                | otherwise = NotFinished
                         newPlatformPos = checkAndMovePlatform state
                                -- TODO Добавить Lose
+                               -- TODO Добавить выталкивание мяча
