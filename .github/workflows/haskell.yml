@@ -35,7 +35,7 @@ jobs:
         # - os: macOS-latest
         #   brew: anybrewdeps
         # - os: ubuntu-latest
-        #   apt-get: happy libblas-dev liblapack-dev
+        #   apt-get: happy libblas-dev liblapack-dev libglvnd-dev
 
         exclude:
         - os: macOS-latest
