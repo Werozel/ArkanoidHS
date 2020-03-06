@@ -27,9 +27,9 @@ data BricksGrid = BricksGrid {
 }
 
 -- Result of a game
-data Result = Win | Lose | NoTime | NotFinished
+data Result = Win | Lose | NoTime | NotFinished deriving Eq
 -- Current menu or level
-data View = MainMenu | ResultsMenu | SettingsMenu | LevelView
+data View = MainMenu | ResultsMenu | SettingsMenu | LevelView deriving Eq
 
 data KeyPressed = LeftPressed | RightPressed | NonePressed deriving Eq
 type KeysPressed = [KeyPressed]

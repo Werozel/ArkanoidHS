@@ -33,6 +33,7 @@ library
       Constants
       Base
       LevelGenerator
+      DrawFunctions
   other-modules:
       Paths_ArcanoidHS
   hs-source-dirs:

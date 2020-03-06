@@ -8,39 +8,6 @@ import Constants
 import Service
 
 
--- Draws full blocks grid
-drawGrid :: BricksGrid -> Picture
-drawGrid BricksGrid{..} = drawBricks bricks
-
-drawBricks :: [[Brick]] -> Picture
-drawBricks (row:xs) = Pictures [drawBricksRow row, drawBricks xs]
-drawBricks _ = Pictures [Blank]
-
-
--- Draws one bricks row
-drawBricksRow :: BricksGridRow -> Picture
-drawBricksRow (NoBrick:xs) = Pictures [drawBricksRow xs]
-drawBricksRow (brick@Brick {..}:xs) = Pictures [Color (getBrickColor brick) $ uncurry Translate position (uncurry rectangleSolid size), drawBricksRow xs]
-drawBricksRow _ = Pictures [Blank]
-
-
-getBrickColor :: Brick -> Color
-getBrickColor brick@Brick{..} = newColor
-  where newColor | hitsLeft == 1 = yellow
-                 | hitsLeft == 2 = orange
-                 | hitsLeft == 3 = dark red
-
-
--- Handles incoming events
-eventHandler :: Event -> GameState -> GameState
-eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
-  | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else removeFromList keysPressed LeftPressed}
-  | key == KeyRight = state {keysPressed = if keyState == Down then RightPressed:keysPressed else removeFromList keysPressed RightPressed}
-  | otherwise = state
-eventHandler _ state = state
-
-
-
 
 moveBall :: Point -> Vector -> Point
 moveBall (x, y) (vx, vy) = (newX, newY)
