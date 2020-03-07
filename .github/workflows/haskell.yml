@@ -83,13 +83,10 @@ jobs:
     - name: Build
       run: |
         stack install
-        ;;
         stack build
-        ;;
     - name : Run
       run : |
         stack run
-        ;;
       env:
         ARGS: ${{ matrix.plan.resolver }}
         BUILD: ${{ matrix.plan.build }}
