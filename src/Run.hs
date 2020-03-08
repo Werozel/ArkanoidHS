@@ -40,8 +40,11 @@ tick _ state@GameState{..} | bricksLeft == 0 =
                         newBallPos = moveBall ballPos ballDirection
                         newGrid = detectHit newBallPos (bricks grid)
                         hit = lastHit newGrid
+                        platformHitFlag = checkPlatformHit newBallPos state
+                        resHit | platformHitFlag = PlatformHit
+                               | otherwise = hit
                         bricksLeftUpdated = getRemainingBricksCount newGrid
-                        newBallDirection = getBallDirection hit newBallPos ballDirection
+                        newBallDirection = getBallDirection resHit newBallPos ballDirection
                         newResult | bricksLeftUpdated == 0 = Win
                                | otherwise = NotFinished
                         newPlatformPos = checkAndMovePlatform state

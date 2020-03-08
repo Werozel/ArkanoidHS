@@ -98,6 +98,18 @@ blankDetectHit :: Point -> [BricksGridRow] -> BricksGrid
 blankDetectHit pos rows = BricksGrid rows NoHit
 
 
+
+checkPlatformHit :: Point -> GameState -> Bool
+checkPlatformHit (x, y) state@GameState{..} | fst platformPos - platformLength / 2 <= x && x <= fst platformPos + platformLength / 2 &&
+                                              snd platformPos - platformHeight / 2 <= ballBottom && ballBottom <= snd platformPos + platformHeight / 2
+                                               = True
+                                            | otherwise = False
+                                                where
+                                                  ballBottom = y - ballRadius
+
+
+
+
 checkAndMovePlatform :: GameState -> Point
 checkAndMovePlatform state = platformPos (checkAndMovePlatformRight (checkAndMovePlatformLeft state))
 
