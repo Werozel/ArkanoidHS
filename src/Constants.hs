@@ -6,6 +6,14 @@ import Graphics.Gloss.Interface.Pure.Game
 fps :: Int
 fps = 120
 
+-- Global constant
+secondsInMinute :: Int
+secondsInMinute = 60
+
+-- Returns seconds to test game
+testSeconds :: Int
+testSeconds = 10
+
 -- Returns width for window
 windowWidthFloat :: Float
 windowWidthFloat = 400

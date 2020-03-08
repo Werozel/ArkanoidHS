@@ -1,6 +1,6 @@
 {-# LANGUAGE RecordWildCards #-}
 module Run
-  ( run
+  ( run, tick, initState
   ) where
 
 import Graphics.Gloss.Interface.Pure.Game
