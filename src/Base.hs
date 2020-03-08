@@ -118,7 +118,7 @@ blankDetectHit pos rows = BricksGrid rows NoHit
 
 
 -----------------------------
--- Remaining bricks count
+-- Remaining bricks count  --
 -----------------------------
 
 getRemainingBricksCountRow :: BricksGridRow -> Int
@@ -133,7 +133,7 @@ getRemainingBricksCount (BricksGrid (row : xs) hit) = getRemainingBricksCountRow
 
 
 ------------------------------
--- Platform Movement
+--    Platform Movement     --
 ------------------------------
 
 checkAndMovePlatform :: GameState -> Point
