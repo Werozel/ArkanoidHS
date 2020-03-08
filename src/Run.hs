@@ -23,7 +23,7 @@ initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatf
     initBallPos = (0, initBallPositionY)
 
     initBallDirection :: Point
-    initBallDirection = (rnd, ballVerticalDirection)
+    initBallDirection = (rnd / fromIntegral fps, ballVerticalDirection / fromIntegral fps)
       where
         ballVerticalDirection = sqrt ((ballSpeed * ballSpeed) - (rnd * rnd))
 
@@ -53,7 +53,6 @@ tick _ state@GameState{..} | result == Win =
                                         | checkFall newBallPos state = Lose
                                         | otherwise = NotFinished
                               newPlatformPos = checkAndMovePlatform state
-                                     -- TODO Добавить Lose
                                      -- TODO Добавить выталкивание мяча
 
 

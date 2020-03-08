@@ -4,7 +4,7 @@ import Graphics.Gloss.Interface.Pure.Game
 
 -- Returns fps for the game
 fps :: Int
-fps = 60
+fps = 120
 
 -- Returns width for window
 windowWidthFloat :: Float
@@ -34,10 +34,10 @@ bgGreyN = 0.4
 
 -- Returns speed coefficient for the ball
 speedCoef :: Float
-speedCoef = 3
+speedCoef = 65
 
 ballSpeed :: Float
-ballSpeed = 4.5
+ballSpeed = 4.5 * speedCoef
 
 -- Returns speed coefficient for the platform
 platformSpeed :: Float
