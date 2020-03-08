@@ -35,29 +35,32 @@ initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatf
 
 -- Changes game state with each tick
 tick ::Float -> GameState -> GameState
-tick _ state@GameState{..} | bricksLeft == 0 =
+tick _ state@GameState{..} | result == Win =
                               GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
-                     | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
-                      where
-                        newBallPos = moveBall ballPos ballDirection
-                        newGrid = detectHit newBallPos (bricks grid)
-                        hit = lastHit newGrid
-                        platformHitFlag = checkPlatformHit newBallPos state
-                        resHit | platformHitFlag = PlatformHit
-                               | otherwise = hit
-                        bricksLeftUpdated = getRemainingBricksCount newGrid
-                        newBallDirection = getBallDirection resHit newBallPos ballDirection
-                        newResult | bricksLeftUpdated == 0 = Win
-                                  | checkFall newBallPos state = Lose
-                                  | otherwise = NotFinished
-                        newPlatformPos = checkAndMovePlatform state
-                               -- TODO Добавить Lose
-                               -- TODO Добавить выталкивание мяча
+                           | result == Lose =
+                              GameState False LevelView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
+                           | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
+                            where
+                              newBallPos = moveBall ballPos ballDirection
+                              newGrid = detectHit newBallPos (bricks grid)
+                              hit = lastHit newGrid
+                              platformHitFlag = checkPlatformHit newBallPos state
+                              resHit | platformHitFlag = PlatformHit
+                                     | otherwise = hit
+                              bricksLeftUpdated = getRemainingBricksCount newGrid
+                              newBallDirection = getBallDirection resHit newBallPos ballDirection
+                              newResult | bricksLeftUpdated == 0 = Win
+                                        | checkFall newBallPos state = Lose
+                                        | otherwise = NotFinished
+                              newPlatformPos = checkAndMovePlatform state
+                                     -- TODO Добавить Lose
+                                     -- TODO Добавить выталкивание мяча
 
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
 draw GameState {..} | result == Win = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Win!"
+                    | result == Lose = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Lose"
                     | otherwise = Pictures [ball, bricks, platform, walls]
                       where
                         ball = uncurry Translate ballPos (circleSolid ballRadius)
