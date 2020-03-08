@@ -4,7 +4,7 @@ import Graphics.Gloss.Interface.Pure.Game
 
 -- Returns fps for the game
 fps :: Int
-fps = 60
+fps = 1
 
 -- Returns width for window
 windowWidthFloat :: Float
@@ -50,7 +50,7 @@ initBallDirectionY = 1 * speed
 
 -- Returns initial ball vertical position
 initBallPositionY :: Float
-initBallPositionY = -150
+initBallPositionY = 130
 
 -- Returns initial ball vertical position
 initPlatformPositionY :: Float

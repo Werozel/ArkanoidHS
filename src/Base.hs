@@ -16,16 +16,16 @@ moveBall (x, y) (vx, vy) = (newX, newY)
     rightWindowBorder = windowWidthFloat / 2
     topWindowBorder = windowHeightFloat / 2
     bottomWindowBorder = - windowHeightFloat / 2
-    newX | vx < 0 = max leftWindowBorder (x + vx)
-         | vx > 0 = min rightWindowBorder (x + vx)
+    -- FIXME Координата неправильная
+    newX | vx < 0 = max leftWindowBorder (x + vx + ballRadius)
+         | vx > 0 = min rightWindowBorder (x + vx - ballRadius)
          | otherwise = x + vx
-    newY | vy < 0 = max bottomWindowBorder (y + vy)
-         | vy > 0 = min topWindowBorder (y + vy)
+    newY | vy < 0 = max bottomWindowBorder (y + vy + ballRadius)
+         | vy > 0 = min topWindowBorder (y + vy - ballRadius)
          | otherwise = y + vy
 
 
 
--- FIXME Бесконечно ударяется о верхнюю границу
 getBallDirection :: Hit -> Point -> Vector -> Vector
 getBallDirection hit ballPos ballDirection
   | hit == LeftHit || hit == RightHit 
@@ -46,7 +46,8 @@ getBallDirection hit ballPos ballDirection
 
 data CheckHitResult = CheckHitResult {
   row :: BricksGridRow,
-  hit :: Hit
+  hit :: Hit,
+  newBallPos :: Point
 }
 
 
@@ -72,35 +73,71 @@ checkHit (x, y) Brick{..} | leftBorder <= x && x <= rightBorder &&
 
 
 checkHitRow :: Point -> BricksGridRow -> CheckHitResult
-checkHitRow _ [] = CheckHitResult [] NoHit
-checkHitRow currPos (brick@Brick{..} : xs) 
-                                 | resHit == NoHit = CheckHitResult (brick : resRow) resHitRow
-                                 | otherwise = CheckHitResult (newBrick : xs) resHit
-                          where
-                            resHit = checkHit currPos brick
-                            newBrick = if hitsLeft <= 1 then NoBrick else Brick position size (hitsLeft - 1)
-                            CheckHitResult resRow resHitRow = checkHitRow currPos xs
-checkHitRow currPos (brick@NoBrick : xs) = CheckHitResult (brick : resRow) resHitRow
+checkHitRow pos [] = CheckHitResult [] NoHit pos
+checkHitRow currPos (brick@Brick {..}:xs)
+  | resHit == NoHit = CheckHitResult (brick : resRow) resHitRow currPos
+  | otherwise = CheckHitResult (newBrick : xs) resHit newBallPos
+  where
+    resHit = checkHit currPos brick
+    newBrick
+      | hitsLeft <= 1 = NoBrick
+      | otherwise = Brick position size (hitsLeft - 1)
+    newBallPos
+      | resHit == TopHit = (fst currPos, snd currPos - verticalTopGap)
+      | resHit == BottomHit = (fst currPos, snd currPos + verticalBottomGap)
+      | resHit == RightHit = (fst currPos + horizontalLeftGap, snd currPos)
+      | resHit == LeftHit = (fst currPos - horizontalRightGap, snd currPos)
+      | otherwise = currPos
+    verticalTopGap = abs (snd position - brickHeight / 2 - snd currPos + ballRadius)
+    verticalBottomGap = abs (snd position + brickHeight / 2 - snd currPos - ballRadius)
+    horizontalLeftGap = abs (fst position + brickLength / 2 - fst currPos - ballRadius)
+    horizontalRightGap = abs (fst position - brickLength / 2 - fst currPos + ballRadius)
+    CheckHitResult resRow resHitRow _ = checkHitRow currPos xs
+checkHitRow currPos (brick@NoBrick : xs) = CheckHitResult (brick : resRow) resHitRow currPos
                                           where
-                                            CheckHitResult resRow resHitRow = checkHitRow currPos xs
+                                            CheckHitResult resRow resHitRow _ = checkHitRow currPos xs
 
 
 
-detectHit :: Point -> [BricksGridRow] -> BricksGrid
-detectHit _ [] = BricksGrid [] NoHit
-detectHit currPos (row: xs) | resHit == NoHit = BricksGrid (row : bricks) lastHit
-                            | otherwise = BricksGrid (resRow : xs) resHit
+data DetectHitResult = DetectHitResult {
+  gridRes :: BricksGrid,
+  newPos :: Point
+}
+
+detectHit :: Point -> [BricksGridRow] -> DetectHitResult
+detectHit currPos [] = DetectHitResult (BricksGrid [] NoHit) currPos
+detectHit currPos (row: xs) | resHit == NoHit = DetectHitResult (BricksGrid (row : bricks) lastHit) currPos
+                            | otherwise = DetectHitResult (BricksGrid (resRow : xs) resHit) newBallPos
                               where
-                                CheckHitResult resRow resHit = checkHitRow currPos row
-                                BricksGrid bricks lastHit = detectHit currPos xs
+                                CheckHitResult resRow resHit newBallPos = checkHitRow currPos row
+                                DetectHitResult (BricksGrid bricks lastHit) _ = detectHit currPos xs
 
 blankDetectHit :: Point -> [BricksGridRow] -> BricksGrid
 blankDetectHit pos rows = BricksGrid rows NoHit
 
 
+
+-----------------------------
+-- Remaining bricks count
+-----------------------------
+
+getRemainingBricksCountRow :: BricksGridRow -> Int
+getRemainingBricksCountRow [] = 0
+getRemainingBricksCountRow (NoBrick : xs) = getRemainingBricksCountRow xs
+getRemainingBricksCountRow _ = 1
+
+getRemainingBricksCount :: BricksGrid -> Int
+getRemainingBricksCount (BricksGrid [] hit) = 0
+getRemainingBricksCount (BricksGrid (row : xs) hit) = getRemainingBricksCountRow row + getRemainingBricksCount (BricksGrid xs hit)
+
+
+
+------------------------------
+-- Platform Movement
+------------------------------
+
 checkAndMovePlatform :: GameState -> Point
 checkAndMovePlatform state = platformPos (checkAndMovePlatformRight (checkAndMovePlatformLeft state))
-
 
 checkAndMovePlatformLeft :: GameState -> GameState
 checkAndMovePlatformLeft state@GameState{..}
@@ -113,12 +150,3 @@ checkAndMovePlatformRight state@GameState{..}
   | elemInList keysPressed RightPressed = state{platformPos = (min ((windowWidthFloat - platformLength) / 2)
       (fst platformPos + (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)}
   | otherwise = state
-
-getRemainingBricksCountRow :: BricksGridRow -> Int
-getRemainingBricksCountRow [] = 0
-getRemainingBricksCountRow (NoBrick : xs) = getRemainingBricksCountRow xs
-getRemainingBricksCountRow _ = 1
-
-getRemainingBricksCount :: BricksGrid -> Int
-getRemainingBricksCount (BricksGrid [] hit) = 0
-getRemainingBricksCount (BricksGrid (row : xs) hit) = getRemainingBricksCountRow row + getRemainingBricksCount (BricksGrid xs hit)
