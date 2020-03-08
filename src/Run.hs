@@ -23,7 +23,9 @@ initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatf
     initBallPos = (0, initBallPositionY)
 
     initBallDirection :: Point
-    initBallDirection = (rnd, initBallDirectionY)
+    initBallDirection = (rnd, ballVerticalDirection)
+      where
+        ballVerticalDirection = sqrt ((ballSpeed * ballSpeed) - (rnd * rnd))
 
     initPlatformPos :: Point
     initPlatformPos = (0, initPlatformPositionY)
@@ -46,7 +48,8 @@ tick _ state@GameState{..} | bricksLeft == 0 =
                         bricksLeftUpdated = getRemainingBricksCount newGrid
                         newBallDirection = getBallDirection resHit newBallPos ballDirection
                         newResult | bricksLeftUpdated == 0 = Win
-                               | otherwise = NotFinished
+                                  | checkFall newBallPos state = Lose
+                                  | otherwise = NotFinished
                         newPlatformPos = checkAndMovePlatform state
                                -- TODO Добавить Lose
                                -- TODO Добавить выталкивание мяча

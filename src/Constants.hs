@@ -33,8 +33,11 @@ bgGreyN :: Float
 bgGreyN = 0.4
 
 -- Returns speed coefficient for the ball
-speed :: Float
-speed = 3
+speedCoef :: Float
+speedCoef = 3
+
+ballSpeed :: Float
+ballSpeed = 4.5
 
 -- Returns speed coefficient for the platform
 platformSpeed :: Float
@@ -42,11 +45,11 @@ platformSpeed = 200
 
 -- Returns range for ball horizontal direction random generator
 randRange :: (Float, Float)
-randRange = (-2 * speed, 2 * speed)
+randRange = (-2 * speedCoef, 2 * speedCoef)
 
 -- Returns initial ball vertical speed
 initBallDirectionY :: Float
-initBallDirectionY = 1 * speed
+initBallDirectionY = 1 * speedCoef
 
 -- Returns initial ball vertical position
 initBallPositionY :: Float
