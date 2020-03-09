@@ -118,7 +118,7 @@ checkPlatformHit (x, y) state@GameState{..} | platformX - platformLength / 2 <= 
 
 
 checkFall :: Point -> GameState -> Bool
-checkFall (x, y) state@GameState{..} | y - ballRadius < snd platformPos - platformHeight / 2 = True
+checkFall (x, y) state@GameState{..} | y - ballRadius < snd platformPos - (platformHeight / 2) - (ballRadius * 2.5) = True
                                      | otherwise = False
 
 

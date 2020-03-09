@@ -59,18 +59,27 @@ tick _ state@GameState{..} | result == Win =
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
-draw GameState {..} | result == Win = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Win!"
-                    | result == Lose = Translate (- windowWidthFloat / 3) 0 $ Color black $ Text "Lose"
+draw GameState {..} | result == Win = Pictures [winText, platform, walls]
+                    | result == Lose = Pictures [loseText, ball, platform, walls]
                     | otherwise = Pictures [ball, bricks, platform, walls]
                       where
+                        winText = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Win!"
+                        loseText = Translate (- windowWidthFloat / 3) 0 $ Color black $ Text "Lose"
                         ball = uncurry Translate ballPos (circleSolid ballRadius)
-                        platform = uncurry Translate platformPos (rectangleSolid platformLength platformHeight)
                         bricks = drawGrid grid
                         walls = Pictures [
                           Translate 0 (windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
                           Translate 0 (- windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
                           Translate ((- windowWidthFloat) / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat),
                           Translate (windowWidthFloat / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat)]
+                        platformBorder = Color white $ rectangleSolid 1 platformHeight
+                        platformBorders = Pictures [
+                          Translate (fst platformPos + platformLength / 2) (snd platformPos) platformBorder,
+                          Translate (fst platformPos - platformLength / 2) (snd platformPos) platformBorder,
+                          uncurry Translate platformPos platformBorder]
+                        platform = Pictures [
+                          uncurry Translate platformPos (rectangleSolid platformLength platformHeight),
+                          platformBorders]
 
 
 -- Handles incoming events
