@@ -74,9 +74,9 @@ draw GameState {..} | result == Win = Pictures [winText, platform, walls]
                           Translate (windowWidthFloat / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat)]
                         platformBorder = Color white $ rectangleSolid 1 platformHeight
                         platformBorders = Pictures [
-                          Translate (fst platformPos + platformLength / 2) (snd platformPos) platformBorder,
-                          Translate (fst platformPos - platformLength / 2) (snd platformPos) platformBorder,
-                          uncurry Translate platformPos platformBorder]
+                          Translate (fst platformPos + 1 + (platformLength / 2)) (snd platformPos) platformBorder,
+                          Translate (fst platformPos - 1 - (platformLength / 2)) (snd platformPos) platformBorder,
+                          uncurry Translate platformPos $ Color white $ circleSolid 1]
                         platform = Pictures [
                           uncurry Translate platformPos (rectangleSolid platformLength platformHeight),
                           platformBorders]
