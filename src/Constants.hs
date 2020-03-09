@@ -56,7 +56,7 @@ randRange :: (Float, Float)
 randRange = (-2 * speedCoef, 2 * speedCoef)
 
 platformHitAngleRange :: (Float, Float)
-platformHitAngleRange = (-4 * speedCoef, 4 * speedCoef)
+platformHitAngleRange = (-4.3 * speedCoef, 4.3 * speedCoef)
 
 -- Returns initial ball vertical speed
 initBallDirectionY :: Float
