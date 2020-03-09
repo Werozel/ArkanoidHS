@@ -16,14 +16,14 @@ testSeconds = 10
 
 -- Returns width for window
 windowWidthFloat :: Float
-windowWidthFloat = 400
+windowWidthFloat = fromIntegral windowWidth
 
 windowWidth :: Int
 windowWidth = 400
 
 -- Returns height for window
 windowHeightFloat :: Float
-windowHeightFloat = 600
+windowHeightFloat = fromIntegral windowHeight
 
 windowHeight :: Int
 windowHeight = 600
@@ -54,6 +54,9 @@ platformSpeed = 200
 -- Returns range for ball horizontal direction random generator
 randRange :: (Float, Float)
 randRange = (-2 * speedCoef, 2 * speedCoef)
+
+platformHitAngleRange :: (Float, Float)
+platformHitAngleRange = (-4 * speedCoef, 4 * speedCoef)
 
 -- Returns initial ball vertical speed
 initBallDirectionY :: Float

@@ -98,14 +98,23 @@ blankDetectHit :: Point -> [BricksGridRow] -> BricksGrid
 blankDetectHit pos rows = BricksGrid rows NoHit
 
 
+data PlatformHitResult = PlatformHitResult {
+  hitFlag :: Bool,
+  fromPlatformDirection :: Point
+}
 
-checkPlatformHit :: Point -> GameState -> Bool
-checkPlatformHit (x, y) state@GameState{..} | fst platformPos - platformLength / 2 <= x && x <= fst platformPos + platformLength / 2 &&
-                                              snd platformPos - platformHeight / 2 <= ballBottom && ballBottom <= snd platformPos + platformHeight / 2
-                                               = True
-                                            | otherwise = False
+checkPlatformHit :: Point -> GameState -> PlatformHitResult
+checkPlatformHit (x, y) state@GameState{..} | platformX - platformLength / 2 <= x && x <= platformX + platformLength / 2 &&
+                                              platformY - platformHeight / 2 <= ballBottom && ballBottom <= platformY + platformHeight / 2
+                                               = PlatformHitResult True (ballNewXDirection / fromIntegral fps, ballNewYDirection / fromIntegral fps)
+                                            | otherwise = PlatformHitResult False (0, 0)
                                                 where
                                                   ballBottom = y - ballRadius
+                                                  platformX = fst platformPos
+                                                  platformY = snd platformPos
+                                                  ballXFromPlatformPos = x - platformX
+                                                  ballNewXDirection = ballXFromPlatformPos / (platformLength / 2) * snd platformHitAngleRange
+                                                  ballNewYDirection = sqrt ((ballSpeed * ballSpeed) - (ballNewXDirection * ballNewXDirection))
 
 
 checkFall :: Point -> GameState -> Bool

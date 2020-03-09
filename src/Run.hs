@@ -44,11 +44,12 @@ tick _ state@GameState{..} | result == Win =
                               newBallPos = moveBall ballPos ballDirection
                               newGrid = detectHit newBallPos (bricks grid)
                               hit = lastHit newGrid
-                              platformHitFlag = checkPlatformHit newBallPos state
+                              PlatformHitResult platformHitFlag fromPlatformDirection = checkPlatformHit newBallPos state
                               resHit | platformHitFlag = PlatformHit
                                      | otherwise = hit
                               bricksLeftUpdated = getRemainingBricksCount newGrid
-                              newBallDirection = getBallDirection resHit newBallPos ballDirection
+                              newBallDirection | platformHitFlag = fromPlatformDirection
+                                               | otherwise = getBallDirection resHit newBallPos ballDirection
                               newResult | bricksLeftUpdated == 0 = Win
                                         | checkFall newBallPos state = Lose
                                         | otherwise = NotFinished
@@ -59,7 +60,7 @@ tick _ state@GameState{..} | result == Win =
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
 draw GameState {..} | result == Win = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Win!"
-                    | result == Lose = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Lose"
+                    | result == Lose = Translate (- windowWidthFloat / 3) 0 $ Color black $ Text "Lose"
                     | otherwise = Pictures [ball, bricks, platform, walls]
                       where
                         ball = uncurry Translate ballPos (circleSolid ballRadius)
