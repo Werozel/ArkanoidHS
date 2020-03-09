@@ -44,6 +44,7 @@ bgGreyN = 0.4
 speedCoef :: Float
 speedCoef = 65
 
+-- Returns actual ball speed
 ballSpeed :: Float
 ballSpeed = 4.5 * speedCoef
 

@@ -8,7 +8,7 @@ import Constants
 import Service
 
 
-
+-- Returns new ball position on tick
 moveBall :: Point -> Vector -> Point
 moveBall (x, y) (vx, vy) = (newX, newY)
   where
@@ -26,6 +26,7 @@ moveBall (x, y) (vx, vy) = (newX, newY)
 
 
 -- FIXME Бесконечно ударяется о верхнюю границу
+-- Returns new ball direction dependent on hit
 getBallDirection :: Hit -> Point -> Vector -> Vector
 getBallDirection hit ballPos ballDirection
   | hit == LeftHit || hit == RightHit 
@@ -44,12 +45,14 @@ getBallDirection hit ballPos ballDirection
     windowVerticalRadius = windowHeightFloat / 2
 
 
+-- Result data from checkHit function
 data CheckHitResult = CheckHitResult {
   row :: BricksGridRow,
   hit :: Hit
 }
 
 
+-- Checks if ball hit a brick
 checkHit :: Point -> Brick -> Hit
 checkHit (x, y) Brick{..} | leftBorder <= x && x <= rightBorder &&
                             ballTop > topBorder && ballBottom < topBorder = TopHit
@@ -71,6 +74,7 @@ checkHit (x, y) Brick{..} | leftBorder <= x && x <= rightBorder &&
           ballRight = x + ballRadius
 
 
+-- Checks hit for each row
 checkHitRow :: Point -> BricksGridRow -> CheckHitResult
 checkHitRow _ [] = CheckHitResult [] NoHit
 checkHitRow currPos (brick@Brick{..} : xs) 
@@ -86,6 +90,7 @@ checkHitRow currPos (brick@NoBrick : xs) = CheckHitResult (brick : resRow) resHi
 
 
 
+-- Starts hit check
 detectHit :: Point -> [BricksGridRow] -> BricksGrid
 detectHit _ [] = BricksGrid [] NoHit
 detectHit currPos (row: xs) | resHit == NoHit = BricksGrid (row : bricks) lastHit
@@ -94,15 +99,14 @@ detectHit currPos (row: xs) | resHit == NoHit = BricksGrid (row : bricks) lastHi
                                 CheckHitResult resRow resHit = checkHitRow currPos row
                                 BricksGrid bricks lastHit = detectHit currPos xs
 
-blankDetectHit :: Point -> [BricksGridRow] -> BricksGrid
-blankDetectHit pos rows = BricksGrid rows NoHit
 
-
+-- Result data from function checkPlatformHit
 data PlatformHitResult = PlatformHitResult {
   hitFlag :: Bool,
-  fromPlatformDirection :: Point
+  fromPlatformDirection :: Point -- New ball direction if ball hit the platform
 }
 
+-- Checks if ball hit the platform
 checkPlatformHit :: Point -> GameState -> PlatformHitResult
 checkPlatformHit (x, y) state@GameState{..} | platformX - platformLength / 2 <= x && x <= platformX + platformLength / 2 &&
                                               platformY - platformHeight / 2 <= ballBottom && ballBottom <= platformY + platformHeight / 2
@@ -117,33 +121,39 @@ checkPlatformHit (x, y) state@GameState{..} | platformX - platformLength / 2 <= 
                                                   ballNewYDirection = sqrt ((ballSpeed * ballSpeed) - (ballNewXDirection * ballNewXDirection))
 
 
+-- Checks if ball has fallen beyond reach of the platform
 checkFall :: Point -> GameState -> Bool
 checkFall (x, y) state@GameState{..} | y - ballRadius < snd platformPos - (platformHeight / 2) - (ballRadius * 2.5) = True
                                      | otherwise = False
 
 
-
+-- Returns new platform position
 checkAndMovePlatform :: GameState -> Point
 checkAndMovePlatform state = platformPos (checkAndMovePlatformRight (checkAndMovePlatformLeft state))
 
 
+-- Moves platform left
 checkAndMovePlatformLeft :: GameState -> GameState
 checkAndMovePlatformLeft state@GameState{..}
   | elemInList keysPressed LeftPressed = state{platformPos = (max ((-windowWidthFloat + platformLength) / 2)
       (fst platformPos - (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)}
   | otherwise = state
 
+-- moves platform right
 checkAndMovePlatformRight :: GameState -> GameState
 checkAndMovePlatformRight state@GameState{..}
   | elemInList keysPressed RightPressed = state{platformPos = (min ((windowWidthFloat - platformLength) / 2)
       (fst platformPos + (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)}
   | otherwise = state
 
+
+-- Returns number of bricks left on the row
 getRemainingBricksCountRow :: BricksGridRow -> Int
 getRemainingBricksCountRow [] = 0
 getRemainingBricksCountRow (NoBrick : xs) = getRemainingBricksCountRow xs
 getRemainingBricksCountRow _ = 1
 
+-- Returns number of bricks left on the level
 getRemainingBricksCount :: BricksGrid -> Int
 getRemainingBricksCount (BricksGrid [] hit) = 0
 getRemainingBricksCount (BricksGrid (row : xs) hit) = getRemainingBricksCountRow row + getRemainingBricksCount (BricksGrid xs hit)

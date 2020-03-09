@@ -90,6 +90,8 @@ eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
   | otherwise = state
 eventHandler _ state = state
 
+
+-- Runs the game
 run :: IO()
 run = do
   gen <- getStdGen
