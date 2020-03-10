@@ -17,7 +17,7 @@ import DrawFunctions
 
 -- Returns initial game state
 initState :: Float -> GameState
-initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 initGrid 3 NotFinished [NonePressed]
+initState rnd = GameState True LevelView initBallPos initBallDirection initPlatformPos 0 initGrid 3 NotFinished [NonePressed]
   where
     initBallPos :: Point
     initBallPos = (0, initBallPositionY)
@@ -34,7 +34,7 @@ initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatf
 
 
 -- Changes game state with each tick
-tick ::Float -> GameState -> GameState
+tick :: Float -> GameState -> GameState
 tick _ state@GameState{..} | result == Win =
                               GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
                            | result == Lose =
@@ -61,14 +61,12 @@ tick _ state@GameState{..} | result == Win =
 draw :: GameState -> Picture
 draw GameState {..} | result == Win = Pictures [winText, platform, walls]
                     | result == Lose = Pictures [loseText, ball, platform, walls]
-                    | otherwise = Pictures [ball, bricks, platform, walls, hitText]
+                    | otherwise = Pictures [ball, bricks, platform, walls]
                       where
                         winText = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Win!"
                         loseText = Translate (- windowWidthFloat / 3) 0 $ Color black $ Text "Lose"
                         ball = uncurry Translate ballPos (circleSolid ballRadius)
                         bricks = drawGrid grid
-                        hitText | lastHit grid == NoHit = Blank
-                                | otherwise = Translate (-windowWidthFloat / 2) 0 $ Color black $ Text (showHit (lastHit grid))
                         walls = Pictures [
                           Translate 0 (windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
                           Translate 0 (- windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),

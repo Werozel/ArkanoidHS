@@ -25,7 +25,6 @@ moveBall (x, y) (vx, vy) = (newX, newY)
 
 
 
--- FIXME Бесконечно ударяется о верхнюю границу
 -- Returns new ball direction dependent on hit
 getBallDirection :: Hit -> Point -> Vector -> Vector
 getBallDirection hit ballPos ballDirection
@@ -35,7 +34,7 @@ getBallDirection hit ballPos ballDirection
   | hit == TopHit || hit == BottomHit || hit == PlatformHit ||
     ballTopBorder >= windowVerticalRadius || ballBottomBorder <= -windowVerticalRadius
       = (fst ballDirection, -(snd ballDirection))
-  | hit == LeftTopHit || hit == RightTopHit || 
+  | hit == LeftTopHit || hit == RightTopHit ||
     hit == LeftBottomHit || hit == RightBottomHit
       = (- (fst ballDirection), - (snd ballDirection))
   | otherwise = ballDirection
@@ -48,13 +47,6 @@ getBallDirection hit ballPos ballDirection
     windowVerticalRadius = windowHeightFloat / 2
 
 
--- Result data from checkHit function
-data CheckHitResult = CheckHitResult {
-  row :: BricksGridRow,
-  hit :: Hit
-}
-
-
 -- Checks if ball hit a brick
 checkHit :: Point -> Brick -> Hit
 checkHit (x, y) Brick{..} | topCorner >= bottomBorder && bottomCorner < bottomBorder &&
@@ -65,6 +57,7 @@ checkHit (x, y) Brick{..} | topCorner >= bottomBorder && bottomCorner < bottomBo
                             leftCorner <= rightBorder && rightCorner > rightBorder = LeftBottomHit
                           | bottomCorner >= topBorder && topCorner < topBorder &&
                             rightCorner >= leftBorder && leftCorner < leftBorder = RightBottomHit
+                            
                           | leftBorder <= x && x <= rightBorder &&
                             ballTop > topBorder && ballBottom < topBorder = TopHit
                           | leftBorder <= x && x <= rightBorder &&
@@ -79,11 +72,13 @@ checkHit (x, y) Brick{..} | topCorner >= bottomBorder && bottomCorner < bottomBo
           rightBorder = fst position + (fst size / 2)
           topBorder = snd position + (snd size / 2)
           bottomBorder = snd position - (snd size / 2)
+          
           sqrtTwo = sqrt 2
           topCorner = y + (ballRadius / sqrtTwo)
           bottomCorner = y - (ballRadius / sqrtTwo)
           leftCorner = x - (ballRadius / sqrtTwo)
           rightCorner = x + (ballRadius / sqrtTwo)
+          
           ballTop = y + ballRadius
           ballBottom = y - ballRadius
           ballLeft = x - ballRadius
@@ -93,6 +88,12 @@ checkHit (x, y) Brick{..} | topCorner >= bottomBorder && bottomCorner < bottomBo
 --          leftCorner = ballLeft
 --          rightCorner = ballRight
 
+
+-- Result data from checkHit function
+data CheckHitResult = CheckHitResult {
+  row :: BricksGridRow, -- Altered row after hit
+  hit :: Hit -- Hit that happened
+}
 
 -- Checks hit for each row
 checkHitRow :: Point -> BricksGridRow -> CheckHitResult

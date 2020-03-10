@@ -58,7 +58,7 @@ bgColor = greyN bgGreyN
 
 -- Returns window for the game
 window :: Display
-window = InWindow "Aracnoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
+window = InWindow "Arkanoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
 
 showHit :: Hit -> String
 showHit TopHit = "TopHit"
