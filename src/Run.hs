@@ -20,12 +20,14 @@ initState :: Float -> GameState
 initState rnd = GameState False MainMenu initBallPos initBallDirection initPlatformPos 0 initGrid 3 NotFinished [NonePressed]
   where
     initBallPos :: Point
-    initBallPos = (0, initBallPositionY)
+    --initBallPos = (0, initBallPositionY)
+    initBallPos = (124, 85)
 
     initBallDirection :: Point
-    initBallDirection = (rnd / fromIntegral fps, ballVerticalDirection / fromIntegral fps)
-      where
-        ballVerticalDirection = sqrt ((ballSpeed * ballSpeed) - (rnd * rnd))
+    initBallDirection = (-1, 1)
+--    initBallDirection = (rnd / fromIntegral fps, ballVerticalDirection / fromIntegral fps)
+--      where
+--        ballVerticalDirection = sqrt ((ballSpeed * ballSpeed) - (rnd * rnd))
 
     initPlatformPos :: Point
     initPlatformPos = (0, initPlatformPositionY)

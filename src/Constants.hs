@@ -4,7 +4,7 @@ import Graphics.Gloss.Interface.Pure.Game
 
 -- Returns fps for the game
 fps :: Int
-fps = 120
+fps = 1
 
 -- Global constant
 secondsInMinute :: Int
@@ -89,11 +89,11 @@ ballRadius = 6
 
 -- Returns brick height
 brickHeight :: Float
-brickHeight = 25
+brickHeight = 15
 
 -- Returns brick length
 brickLength :: Float
-brickLength = 70
+brickLength = 50
 
 -- Returns single hit count
 singleHit :: Int
