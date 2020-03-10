@@ -75,7 +75,7 @@ checkHit (x, y) Brick{..} | leftBorder <= x && x <= rightBorder &&
 checkHitRow :: Point -> BricksGridRow -> CheckHitResult
 checkHitRow pos [] = CheckHitResult [] NoHit pos
 checkHitRow currPos (brick@Brick {..}:xs)
-  | resHit == NoHit = CheckHitResult (brick : resRow) resHitRow currPos
+  | resHit == NoHit = CheckHitResult (brick : resRow) resHitRow newBallPos
   | otherwise = CheckHitResult (newBrick : xs) resHit newBallPos
   where
     resHit = checkHit currPos brick
@@ -83,19 +83,20 @@ checkHitRow currPos (brick@Brick {..}:xs)
       | hitsLeft <= 1 = NoBrick
       | otherwise = Brick position size (hitsLeft - 1)
     newBallPos
-      | resHit == TopHit = (fst currPos, snd currPos - verticalTopGap)
-      | resHit == BottomHit = (fst currPos, snd currPos + verticalBottomGap)
-      | resHit == RightHit = (fst currPos + horizontalLeftGap, snd currPos)
-      | resHit == LeftHit = (fst currPos - horizontalRightGap, snd currPos)
+      | True = (0, 0)
+      | resHit == TopHit = (0, 0)
+      | resHit == BottomHit = (0, 0)
+      | resHit == RightHit = (0, 0)
+      | resHit == LeftHit = (0, 0)
       | otherwise = currPos
-    verticalTopGap = abs (snd position - brickHeight / 2 - snd currPos + ballRadius)
-    verticalBottomGap = abs (snd position + brickHeight / 2 - snd currPos - ballRadius)
-    horizontalLeftGap = abs (fst position + brickLength / 2 - fst currPos - ballRadius)
-    horizontalRightGap = abs (fst position - brickLength / 2 - fst currPos + ballRadius)
+    verticalTopGap = abs (snd position - brickHeight / 2 - snd currPos - ballRadius)
+    verticalBottomGap = abs (snd position + brickHeight / 2 - snd currPos + ballRadius)
+    horizontalLeftGap = abs (fst position + brickLength / 2 - fst currPos + ballRadius)
+    horizontalRightGap = abs (fst position - brickLength / 2 - fst currPos - ballRadius)
     CheckHitResult resRow resHitRow _ = checkHitRow currPos xs
-checkHitRow currPos (brick@NoBrick : xs) = CheckHitResult (brick : resRow) resHitRow currPos
+checkHitRow currPos (brick@NoBrick : xs) = CheckHitResult (brick : resRow) resHitRow newBallPos
                                           where
-                                            CheckHitResult resRow resHitRow _ = checkHitRow currPos xs
+                                            CheckHitResult resRow resHitRow newBallPos = checkHitRow currPos xs
 
 
 
@@ -106,11 +107,11 @@ data DetectHitResult = DetectHitResult {
 
 detectHit :: Point -> [BricksGridRow] -> DetectHitResult
 detectHit currPos [] = DetectHitResult (BricksGrid [] NoHit) currPos
-detectHit currPos (row: xs) | resHit == NoHit = DetectHitResult (BricksGrid (row : bricks) lastHit) currPos
+detectHit currPos (row: xs) | resHit == NoHit = DetectHitResult (BricksGrid (row : bricks) lastHit) newBallPosNext
                             | otherwise = DetectHitResult (BricksGrid (resRow : xs) resHit) newBallPos
                               where
                                 CheckHitResult resRow resHit newBallPos = checkHitRow currPos row
-                                DetectHitResult (BricksGrid bricks lastHit) _ = detectHit currPos xs
+                                DetectHitResult (BricksGrid bricks lastHit) newBallPosNext = detectHit currPos xs
 
 blankDetectHit :: Point -> [BricksGridRow] -> BricksGrid
 blankDetectHit pos rows = BricksGrid rows NoHit
