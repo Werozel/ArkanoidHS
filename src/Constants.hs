@@ -4,7 +4,7 @@ import Graphics.Gloss.Interface.Pure.Game
 
 -- Returns fps for the game
 fps :: Int
-fps = 1
+fps = 120
 
 -- Global constant
 secondsInMinute :: Int
