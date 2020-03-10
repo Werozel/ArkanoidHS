@@ -26,4 +26,4 @@ jobs:
     - name: Haskell linter
       uses: domdere/haskell-lint-action@v1.0.2
       with:
-        secrets: "GITHUB_TOKEN"
+        secrets: ${{ secrets.GITHUB_TOKEN }}
