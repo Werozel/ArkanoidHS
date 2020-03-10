@@ -61,7 +61,7 @@ tick _ state@GameState{..} | result == Win =
 draw :: GameState -> Picture
 draw GameState {..} | result == Win = Pictures [winText, platform, walls]
                     | result == Lose = Pictures [loseText, ball, platform, walls]
-                    | otherwise = Pictures [ball, bricks, platform, walls, hitText]
+                    | otherwise = Pictures [ball, bricks, platform, walls]
                       where
                         winText = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Win!"
                         loseText = Translate (- windowWidthFloat / 3) 0 $ Color black $ Text "Lose"
