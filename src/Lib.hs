@@ -17,7 +17,9 @@ data Brick = Brick {
 
 
 -- Types of ball hit
-data Hit = LeftHit | TopHit | RightHit | BottomHit | NoHit | PlatformHit deriving Eq
+data Hit = LeftHit | TopHit | RightHit | BottomHit |
+           LeftTopHit | RightTopHit | LeftBottomHit | RightBottomHit |
+           NoHit | PlatformHit deriving Eq
 -- A single row from a grid
 type BricksGridRow = [Brick]
 -- All bricks
@@ -57,4 +59,18 @@ bgColor = greyN bgGreyN
 -- Returns window for the game
 window :: Display
 window = InWindow "Aracnoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
+
+showHit :: Hit -> String
+showHit TopHit = "TopHit"
+showHit BottomHit = "BottomHit"
+showHit LeftHit = "LeftHit"
+showHit RightHit = "RightHit"
+showHit LeftTopHit = "LeftTopHit"
+showHit RightTopHit = "RightTopHit"
+showHit LeftBottomHit = "LeftBottomHit"
+showHit RightBottomHit = "RightBottomHit"
+showHit PlatformHit = "PlatfromHit"
+showHit NoHit = "NoHit"
+showHit _ = "UnknownHit"
+
 

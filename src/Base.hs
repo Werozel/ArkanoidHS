@@ -32,9 +32,12 @@ getBallDirection hit ballPos ballDirection
   | hit == LeftHit || hit == RightHit 
     || ballLeftBorder <= -windowHorizontalRadius || ballRightBorder >= windowHorizontalRadius 
       = (-(fst ballDirection), snd ballDirection)
-  | hit == TopHit || hit == BottomHit || hit == PlatformHit
-    || ballTopBorder >= windowVerticalRadius || ballBottomBorder <= -windowVerticalRadius
+  | hit == TopHit || hit == BottomHit || hit == PlatformHit ||
+    ballTopBorder >= windowVerticalRadius || ballBottomBorder <= -windowVerticalRadius
       = (fst ballDirection, -(snd ballDirection))
+  | hit == LeftTopHit || hit == RightTopHit || 
+    hit == LeftBottomHit || hit == RightBottomHit
+      = (- (fst ballDirection), - (snd ballDirection))
   | otherwise = ballDirection
   where
     ballLeftBorder = fst ballPos - ballRadius
@@ -54,7 +57,15 @@ data CheckHitResult = CheckHitResult {
 
 -- Checks if ball hit a brick
 checkHit :: Point -> Brick -> Hit
-checkHit (x, y) Brick{..} | leftBorder <= x && x <= rightBorder &&
+checkHit (x, y) Brick{..} | topCorner >= bottomBorder && bottomCorner < bottomBorder &&
+                            leftCorner <= rightBorder && rightCorner > rightBorder = LeftTopHit
+                          | topCorner >= bottomBorder && bottomCorner < bottomBorder &&
+                            rightCorner >= leftBorder && leftCorner < leftBorder = RightTopHit
+                          | bottomCorner >= topBorder && topCorner < topBorder &&
+                            leftCorner <= rightBorder && rightCorner > rightBorder = LeftBottomHit
+                          | bottomCorner >= topBorder && topCorner < topBorder &&
+                            rightCorner >= leftBorder && leftCorner < leftBorder = RightBottomHit
+                          | leftBorder <= x && x <= rightBorder &&
                             ballTop > topBorder && ballBottom < topBorder = TopHit
                           | leftBorder <= x && x <= rightBorder &&
                             ballTop > bottomBorder && ballBottom < bottomBorder = BottomHit
@@ -64,14 +75,23 @@ checkHit (x, y) Brick{..} | leftBorder <= x && x <= rightBorder &&
                             ballLeft < rightBorder && ballRight > rightBorder = RightHit
                           | otherwise = NoHit
         where
-          leftBorder = fst position - fst size / 2
-          rightBorder = fst position + fst size / 2
-          topBorder = snd position + snd size / 2
-          bottomBorder = snd position - snd size / 2
+          leftBorder = fst position - (fst size / 2)
+          rightBorder = fst position + (fst size / 2)
+          topBorder = snd position + (snd size / 2)
+          bottomBorder = snd position - (snd size / 2)
+          sqrtTwo = sqrt 2
+          topCorner = y + (ballRadius / sqrtTwo)
+          bottomCorner = y - (ballRadius / sqrtTwo)
+          leftCorner = x - (ballRadius / sqrtTwo)
+          rightCorner = x + (ballRadius / sqrtTwo)
           ballTop = y + ballRadius
           ballBottom = y - ballRadius
           ballLeft = x - ballRadius
           ballRight = x + ballRadius
+--          topCorner = ballTop
+--          bottomCorner = ballBottom
+--          leftCorner = ballLeft
+--          rightCorner = ballRight
 
 
 -- Checks hit for each row

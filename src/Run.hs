@@ -67,6 +67,8 @@ draw GameState {..} | result == Win = Pictures [winText, platform, walls]
                         loseText = Translate (- windowWidthFloat / 3) 0 $ Color black $ Text "Lose"
                         ball = uncurry Translate ballPos (circleSolid ballRadius)
                         bricks = drawGrid grid
+                        hitText | lastHit grid == NoHit = Blank
+                                | otherwise = Translate (-windowWidthFloat / 2) 0 $ Color black $ Text (showHit (lastHit grid))
                         walls = Pictures [
                           Translate 0 (windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
                           Translate 0 (- windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
