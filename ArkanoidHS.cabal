@@ -6,11 +6,11 @@ cabal-version: 1.12
 --
 -- hash: 352e75d97285d6c75f562df3f3a3ac2c245218f85aac71f435f722a0233f954c
 
-name:           ArcanoidHS
+name:           ArkanoidHS
 version:        0.1.0.0
-description:    Please see the README on GitHub at <https://github.com/githubuser/ArcanoidHS#readme>
-homepage:       https://github.com/githubuser/ArcanoidHS#readme
-bug-reports:    https://github.com/githubuser/ArcanoidHS/issues
+description:    Please see the README on GitHub at <https://github.com/githubuser/ArkanoidHS#readme>
+homepage:       https://github.com/githubuser/ArkanoidHS#readme
+bug-reports:    https://github.com/githubuser/ArkanoidHS/issues
 author:         Author name here
 maintainer:     example@example.com
 copyright:      2020 Author name here
@@ -23,7 +23,7 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/ArcanoidHS
+  location: https://github.com/githubuser/ArkanoidHS
 
 library
   exposed-modules:
@@ -35,7 +35,7 @@ library
       LevelGenerator
       DrawFunctions
   other-modules:
-      Paths_ArcanoidHS
+      Paths_ArkanoidHS
   hs-source-dirs:
       src
   build-depends:
@@ -46,27 +46,27 @@ library
       extra
   default-language: Haskell2010
 
-executable ArcanoidHS-exe
+executable ArkanoidHS-exe
   main-is: Main.hs
   other-modules:
-      Paths_ArcanoidHS
+      Paths_ArkanoidHS
   hs-source-dirs:
       app
   ghc-options: -O2 -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      ArcanoidHS
+      ArkanoidHS
     , base >=4.7 && <5
   default-language: Haskell2010
 
-test-suite ArcanoidHS-test
+test-suite ArkanoidHS-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      Paths_ArcanoidHS
+      Paths_ArkanoidHS
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      ArcanoidHS
+      ArkanoidHS
     , base >=4.7 && <5
   default-language: Haskell2010
