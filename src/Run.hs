@@ -6,8 +6,8 @@ module Run
 import Graphics.Gloss.Interface.Pure.Game
 
 import System.Random
+import Data.List
 
-import Service
 import Lib
 import Constants
 import Base
@@ -93,8 +93,8 @@ eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
   | key == KeySpace && view == StartScreen = state{view = LevelView}
   | view /= LevelView = state
-  | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else removeFromList keysPressed LeftPressed}
-  | key == KeyRight = state {keysPressed = if keyState == Down then RightPressed:keysPressed else removeFromList keysPressed RightPressed}
+  | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else delete LeftPressed keysPressed}
+  | key == KeyRight = state {keysPressed = if keyState == Down then RightPressed:keysPressed else delete RightPressed keysPressed }
   | otherwise = state
 eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
   | view /= LevelView = state
