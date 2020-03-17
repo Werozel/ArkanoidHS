@@ -90,6 +90,9 @@ eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
   | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else removeFromList keysPressed LeftPressed}
   | key == KeyRight = state {keysPressed = if keyState == Down then RightPressed:keysPressed else removeFromList keysPressed RightPressed}
   | otherwise = state
+eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
+  | c == 'r' = initState 25
+  | otherwise = state
 eventHandler _ state = state
 
 
