@@ -59,12 +59,14 @@ tick _ state@GameState{..} | view /= LevelView = state
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
-draw GameState {..} | view == StartScreen = Pictures [tutorialText]
+draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextRestart, tutorialTestControl, tutorialTextContinue]
                     | result == Win = Pictures [winText, platform, walls]
                     | result == Lose = Pictures [loseText, ball, platform, walls]
                     | otherwise = Pictures [ball, bricks, platform, walls]
                       where
-                        tutorialText = Color black $ Text "'R' - restart\nControl with arrows\n\nPress space to play"
+                        tutorialTextRestart = Translate (-windowWidthFloat * 1.5) 150 $ Color black $ Text "'R' - restart"
+                        tutorialTestControl = Translate (-windowWidthFloat * 1.5) 0 $ Color black $ Text "Control with arrows"
+                        tutorialTextContinue = Translate (-windowWidthFloat * 1.5) (-150) $ Color black $ Text "Press 'Space' to play"
                         winText = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Win!"
                         loseText = Translate (- windowWidthFloat / 3) 0 $ Color black $ Text "Lose"
                         ball = uncurry Translate ballPos (circleSolid ballRadius)
@@ -89,11 +91,13 @@ draw GameState {..} | view == StartScreen = Pictures [tutorialText]
 -- Handles incoming events
 eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
+  | key == KeySpace && view == StartScreen = state{view = LevelView}
+  | view /= LevelView = state
   | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else removeFromList keysPressed LeftPressed}
   | key == KeyRight = state {keysPressed = if keyState == Down then RightPressed:keysPressed else removeFromList keysPressed RightPressed}
-  | key == KeySpace && view == StartScreen = state{view = LevelView}
   | otherwise = state
 eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
+  | view /= LevelView = state
   | c == 'r' || c == 'к' = initState 25 LevelView
   | otherwise = state
 eventHandler _ state = state
