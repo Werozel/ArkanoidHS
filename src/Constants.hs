@@ -19,14 +19,14 @@ windowWidthFloat :: Float
 windowWidthFloat = fromIntegral windowWidth
 
 windowWidth :: Int
-windowWidth = 500
+windowWidth = 400
 
 -- Returns height for window
 windowHeightFloat :: Float
 windowHeightFloat = fromIntegral windowHeight
 
 windowHeight :: Int
-windowHeight = 800
+windowHeight = 600
 
 -- Returns horizontal offset for window
 windowOffsetX :: Int

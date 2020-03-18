@@ -49,7 +49,7 @@ getBallDirection hit ballPos ballDirection
       = (fst ballDirection, -(snd ballDirection))
   | hit == LeftTopHit || hit == RightTopHit ||
     hit == LeftBottomHit || hit == RightBottomHit
-      = (- (fst ballDirection), - (snd ballDirection))
+      = (fst ballDirection, - (snd ballDirection))
   | otherwise = ballDirection
   where
     ballLeftBorder = fst ballPos - ballRadius
