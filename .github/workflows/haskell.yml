@@ -48,6 +48,7 @@ jobs:
     - name: Install OS Packages
       uses: mstksg/get-package@v1
       with:
+        bash: ${{ matrix.bash }}
         apt-get: ${{ matrix.apt-get }}
         brew: ${{ matrix.brew }}
     - uses: actions/checkout@v1
