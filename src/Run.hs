@@ -91,14 +91,16 @@ draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorial
 -- Handles incoming events
 eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
-  | key == KeySpace && view == StartScreen = state{view = LevelView}
-  | view /= LevelView = state
+  | key == KeySpace && view == StartScreen = state{view = LevelView}   -- Handles continue while in start screen
+  | view /= LevelView = state   -- Filters all inputs if not playing right now
+  -- Left arrow key moves platform to the left
   | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else delete LeftPressed keysPressed}
+  -- Right arrow key moves platform to the right
   | key == KeyRight = state {keysPressed = if keyState == Down then RightPressed:keysPressed else delete RightPressed keysPressed }
   | otherwise = state
 eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
   | view /= LevelView = state
-  | c == 'r' || c == 'к' = initState 25 LevelView
+  | c == 'r' || c == 'к' = initState 25 LevelView    -- Handles restart button
   | otherwise = state
 eventHandler _ state = state
 
