@@ -1,10 +1,10 @@
 {-# LANGUAGE RecordWildCards #-}
 module Base where
 
-import Graphics.Gloss.Interface.Pure.Game
+import           Graphics.Gloss.Interface.Pure.Game
 
-import Lib
-import Constants
+import           Constants
+import           Lib
 
 
 -- Returns new ball position on tick
@@ -41,8 +41,8 @@ moveBall (x, y) (vx, vy) = (newX, newY)
 -- Returns new ball direction dependent on hit
 getBallDirection :: Hit -> Point -> Vector -> Vector
 getBallDirection hit ballPos ballDirection
-  | hit == LeftHit || hit == RightHit 
-    || ballLeftBorder <= -windowHorizontalRadius || ballRightBorder >= windowHorizontalRadius 
+  | hit == LeftHit || hit == RightHit
+    || ballLeftBorder <= -windowHorizontalRadius || ballRightBorder >= windowHorizontalRadius
       = (-(fst ballDirection), snd ballDirection)
   | hit == TopHit || hit == BottomHit || hit == PlatformHit ||
     ballTopBorder >= windowVerticalRadius || ballBottomBorder <= -windowVerticalRadius
@@ -70,7 +70,7 @@ checkHit (x, y) Brick{..} | topCorner >= bottomBorder && bottomCorner < bottomBo
                             leftCorner <= rightBorder && rightCorner > rightBorder = LeftBottomHit
                           | bottomCorner >= topBorder && topCorner < topBorder &&
                             rightCorner >= leftBorder && leftCorner < leftBorder = RightBottomHit
-                            
+
                           | leftBorder <= x && x <= rightBorder &&
                             ballTop > topBorder && ballBottom < topBorder = TopHit
                           | leftBorder <= x && x <= rightBorder &&
@@ -85,13 +85,13 @@ checkHit (x, y) Brick{..} | topCorner >= bottomBorder && bottomCorner < bottomBo
           rightBorder = fst position + (fst size / 2)
           topBorder = snd position + (snd size / 2)
           bottomBorder = snd position - (snd size / 2)
-          
+
           sqrtTwo = sqrt 2
           topCorner = y + (ballRadius / sqrtTwo)
           bottomCorner = y - (ballRadius / sqrtTwo)
           leftCorner = x - (ballRadius / sqrtTwo)
           rightCorner = x + (ballRadius / sqrtTwo)
-          
+
           ballTop = y + ballRadius
           ballBottom = y - ballRadius
           ballLeft = x - ballRadius
@@ -111,7 +111,7 @@ data CheckHitResult = CheckHitResult {
 -- Checks hit for each row
 checkHitRow :: Point -> BricksGridRow -> CheckHitResult
 checkHitRow _ [] = CheckHitResult [] NoHit
-checkHitRow currPos (brick@Brick{..} : xs) 
+checkHitRow currPos (brick@Brick{..} : xs)
                                  | resHit == NoHit = CheckHitResult (brick : resRow) resHitRow
                                  | otherwise = CheckHitResult (newBrick : xs) resHit
                           where
@@ -136,7 +136,7 @@ detectHit currPos (row: xs) | resHit == NoHit = BricksGrid (row : bricks) lastHi
 
 -- Result data from function checkPlatformHit
 data PlatformHitResult = PlatformHitResult {
-  hitFlag :: Bool,
+  hitFlag               :: Bool,
   fromPlatformDirection :: Point -- New ball direction if ball hit the platform
 }
 
@@ -183,9 +183,9 @@ checkAndMovePlatformRight state@GameState{..}
 
 -- Returns number of bricks left on the row
 getRemainingBricksCountRow :: BricksGridRow -> Int
-getRemainingBricksCountRow [] = 0
+getRemainingBricksCountRow []             = 0
 getRemainingBricksCountRow (NoBrick : xs) = getRemainingBricksCountRow xs
-getRemainingBricksCountRow _ = 1
+getRemainingBricksCountRow _              = 1
 
 -- Returns number of bricks left on the level
 getRemainingBricksCount :: BricksGrid -> Int
