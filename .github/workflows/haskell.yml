@@ -35,7 +35,8 @@ jobs:
         #- os: macOS-latest
         #  brew: anybrewdeps
         - os: ubuntu-latest
-        apt-get: [happy libblas-dev liblapack-dev libglvnd-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev]
+          bash: sudo apt-get update
+          apt-get: "happy libblas-dev liblapack-dev libglvnd-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev"
 
         exclude:
         - os: macOS-latest
@@ -47,6 +48,7 @@ jobs:
     - name: Install OS Packages
       uses: mstksg/get-package@v1
       with:
+        bash: ${{ matrix.bash }}
         apt-get: ${{ matrix.apt-get }}
         brew: ${{ matrix.brew }}
     - uses: actions/checkout@v1
