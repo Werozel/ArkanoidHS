@@ -14,7 +14,7 @@ main
   | getRemainingBricksCount (grid res) >= 0 = putStrLn "Test passed"
   | otherwise = exitWith (ExitFailure 10)
   where
-    res = gameTest (initState 0) tick (testSeconds * fps)
+    res = gameTest (initState 0 LevelView) tick (testSeconds * fps)
 
 -- Function that calls tick steps times
 gameTest :: GameState -> (Float -> GameState -> GameState) -> Int -> GameState
