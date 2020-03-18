@@ -6,8 +6,8 @@ module Run
 import Graphics.Gloss.Interface.Pure.Game
 
 import System.Random
+import Data.List
 
-import Service
 import Lib
 import Constants
 import Base
@@ -16,8 +16,8 @@ import DrawFunctions
 
 
 -- Returns initial game state
-initState :: Float -> GameState
-initState rnd = GameState True LevelView initBallPos initBallDirection initPlatformPos 0 initGrid 3 NotFinished [NonePressed]
+initState :: Float -> View -> GameState
+initState rnd v = GameState False v initBallPos initBallDirection initPlatformPos 0 initGrid 3 NotFinished [NonePressed]
   where
     initBallPos :: Point
     initBallPos = (0, initBallPositionY)
@@ -34,8 +34,9 @@ initState rnd = GameState True LevelView initBallPos initBallDirection initPlatf
 
 
 -- Changes game state with each tick
-tick :: Float -> GameState -> GameState
-tick _ state@GameState{..} | result == Win =
+tick ::Float -> GameState -> GameState
+tick _ state@GameState{..} | view /= LevelView = state
+                           | result == Win =
                               GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
                            | result == Lose =
                               GameState False LevelView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
@@ -54,19 +55,24 @@ tick _ state@GameState{..} | result == Win =
                                         | checkFall newBallPos state = Lose
                                         | otherwise = NotFinished
                               newPlatformPos = checkAndMovePlatform state
-                                     -- TODO Добавить выталкивание мяча
 
 
 -- Draws picture in window for current game state
 draw :: GameState -> Picture
-draw GameState {..} | result == Win = Pictures [winText, platform, walls]
+draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextRestart, tutorialTestControl, tutorialTextContinue]
+                    | result == Win = Pictures [winText, platform, walls]
                     | result == Lose = Pictures [loseText, ball, platform, walls]
                     | otherwise = Pictures [ball, bricks, platform, walls]
                       where
+                        tutorialTextRestart = Translate (-windowWidthFloat * 1.5) 150 $ Color black $ Text "'R' - restart"
+                        tutorialTestControl = Translate (-windowWidthFloat * 1.5) 0 $ Color black $ Text "Control with arrows"
+                        tutorialTextContinue = Translate (-windowWidthFloat * 1.5) (-150) $ Color black $ Text "Press 'Space' to play"
                         winText = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Win!"
                         loseText = Translate (- windowWidthFloat / 3) 0 $ Color black $ Text "Lose"
                         ball = uncurry Translate ballPos (circleSolid ballRadius)
                         bricks = drawGrid grid
+                        hitText | lastHit grid == NoHit = Blank
+                                | otherwise = Translate (-windowWidthFloat / 2) 0 $ Color black $ Text (showHit (lastHit grid))
                         walls = Pictures [
                           Translate 0 (windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
                           Translate 0 (- windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
@@ -85,8 +91,14 @@ draw GameState {..} | result == Win = Pictures [winText, platform, walls]
 -- Handles incoming events
 eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
-  | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else removeFromList keysPressed LeftPressed}
-  | key == KeyRight = state {keysPressed = if keyState == Down then RightPressed:keysPressed else removeFromList keysPressed RightPressed}
+  | key == KeySpace && view == StartScreen = state{view = LevelView}
+  | view /= LevelView = state
+  | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else delete LeftPressed keysPressed}
+  | key == KeyRight = state {keysPressed = if keyState == Down then RightPressed:keysPressed else delete RightPressed keysPressed }
+  | otherwise = state
+eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
+  | view /= LevelView = state
+  | c == 'r' || c == 'к' = initState 25 LevelView
   | otherwise = state
 eventHandler _ state = state
 
@@ -95,4 +107,4 @@ eventHandler _ state = state
 run :: IO()
 run = do
   gen <- getStdGen
-  play window bgColor fps (initState (fst (randomR randRange gen))) draw eventHandler tick
+  play window bgColor fps (initState (fst (randomR randRange gen)) StartScreen) draw eventHandler tick

@@ -5,7 +5,6 @@ import Graphics.Gloss.Interface.Pure.Game
 
 import Lib
 import Constants
-import Service
 
 
 -- Returns new ball position on tick
@@ -156,14 +155,14 @@ checkAndMovePlatform state = platformPos (checkAndMovePlatformRight (checkAndMov
 -- Moves platform left
 checkAndMovePlatformLeft :: GameState -> GameState
 checkAndMovePlatformLeft state@GameState{..}
-  | elemInList keysPressed LeftPressed = state{platformPos = (max ((-windowWidthFloat + platformLength) / 2)
+  | LeftPressed `elem` keysPressed = state{platformPos = (max ((-windowWidthFloat + platformLength) / 2)
       (fst platformPos - (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)}
   | otherwise = state
 
 -- moves platform right
 checkAndMovePlatformRight :: GameState -> GameState
 checkAndMovePlatformRight state@GameState{..}
-  | elemInList keysPressed RightPressed = state{platformPos = (min ((windowWidthFloat - platformLength) / 2)
+  | RightPressed `elem` keysPressed  = state{platformPos = (min ((windowWidthFloat - platformLength) / 2)
       (fst platformPos + (platformSpeed / fromIntegral Constants.fps)), initPlatformPositionY)}
   | otherwise = state
 
