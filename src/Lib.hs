@@ -60,6 +60,7 @@ bgColor = greyN bgGreyN
 window :: Display
 window = InWindow "Arkanoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
 
+-- Converts Hit to String for Show function
 showHit :: Hit -> String
 showHit TopHit = "TopHit"
 showHit BottomHit = "BottomHit"
@@ -70,7 +71,6 @@ showHit RightTopHit = "RightTopHit"
 showHit LeftBottomHit = "LeftBottomHit"
 showHit RightBottomHit = "RightBottomHit"
 showHit PlatformHit = "PlatfromHit"
-showHit NoHit = "NoHit"
 showHit _ = "UnknownHit"
 
 
