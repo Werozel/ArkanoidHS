@@ -35,6 +35,7 @@ jobs:
         #- os: macOS-latest
         #  brew: anybrewdeps
         - os: ubuntu-latest
+          bash: sudo apt-get update
           apt-get: "happy libblas-dev liblapack-dev libglvnd-dev libglu1-mesa-dev freeglut3-dev mesa-common-dev"
 
         exclude:
