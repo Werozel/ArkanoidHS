@@ -11,17 +11,30 @@ import Constants
 moveBall :: Point -> Vector -> Point
 moveBall (x, y) (vx, vy) = (newX, newY)
   where
-    leftWindowBorder = - windowWidthFloat / 2
+    leftWindowBorder = -windowWidthFloat / 2
     rightWindowBorder = windowWidthFloat / 2
     topWindowBorder = windowHeightFloat / 2
-    bottomWindowBorder = - windowHeightFloat / 2
-    newX | vx < 0 = max leftWindowBorder (x + vx)
-         | vx > 0 = min rightWindowBorder (x + vx)
-         | otherwise = x + vx
-    newY | vy < 0 = max bottomWindowBorder (y + vy)
-         | vy > 0 = min topWindowBorder (y + vy)
-         | otherwise = y + vy
-
+    bottomWindowBorder = -windowHeightFloat / 2
+    newX
+      | vx < 0 =
+        if max leftWindowBorder (x + vx - ballRadius) == leftWindowBorder
+          then leftWindowBorder + ballRadius
+          else x + vx
+      | vx > 0 =
+        if min rightWindowBorder (x + vx + ballRadius) == rightWindowBorder
+          then rightWindowBorder - ballRadius
+          else x + vx
+      | otherwise = x + vx
+    newY
+      | vy < 0 =
+        if max bottomWindowBorder (y + vy - ballRadius) == bottomWindowBorder
+          then bottomWindowBorder + ballRadius
+          else y + vy
+      | vy > 0 =
+        if min topWindowBorder (y + vy + ballRadius) == topWindowBorder
+         then topWindowBorder - ballRadius
+         else y + vy
+      | otherwise = y + vy
 
 
 -- Returns new ball direction dependent on hit
