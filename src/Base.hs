@@ -8,6 +8,7 @@ import Constants
 
 
 -- Returns new ball position on tick
+-- Also pushes the ball out of borders if necessary
 moveBall :: Point -> Vector -> Point
 moveBall (x, y) (vx, vy) = (newX, newY)
   where
