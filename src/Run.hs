@@ -15,7 +15,7 @@ import LevelGenerator
 import DrawFunctions
 
 
--- Returns initial game state
+--Возвращает начальное состояние игры
 initState :: Float -> View -> GameState
 initState rnd v = GameState False v initBallPos initBallDirection initPlatformPos 0 initGrid 3 NotFinished [NonePressed]
   where
@@ -29,11 +29,11 @@ initState rnd v = GameState False v initBallPos initBallDirection initPlatformPo
 
     initPlatformPos :: Point
     initPlatformPos = (0, initPlatformPositionY)
-    
+
     initGrid = generateLevel 1
 
 
--- Changes game state with each tick
+-- Изменяет состояние игры с каждым тиком
 tick ::Float -> GameState -> GameState
 tick _ state@GameState{..} | view /= LevelView = state
                            | result == Win =
@@ -57,38 +57,55 @@ tick _ state@GameState{..} | view /= LevelView = state
                               newPlatformPos = checkAndMovePlatform state
 
 
--- Draws picture in window for current game state
+-- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> Picture
-draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextRestart, tutorialTestControl, tutorialTextContinue]
-                    | result == Win = Pictures [winText, platform, walls]
-                    | result == Lose = Pictures [loseText, ball, platform, walls]
-                    | otherwise = Pictures [ball, bricks, platform, walls]
+draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextRestart,tutorialTest, tutorialTestControl, tutorialTextContinue]
+                    | result == Win = Pictures [winText, winText2, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor]
+                    | result == Lose = Pictures [loseText, loseText2, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor]
+                    | otherwise = Pictures [ball, nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor]
                       where
-                        tutorialTextRestart = Translate (-windowWidthFloat * 1.5) 150 $ Color black $ Text "'R' - restart"
-                        tutorialTestControl = Translate (-windowWidthFloat * 1.5) 0 $ Color black $ Text "Control with arrows"
-                        tutorialTextContinue = Translate (-windowWidthFloat * 1.5) (-150) $ Color black $ Text "Press 'Space' to play"
-                        winText = Translate (- windowWidthFloat / 4) 0 $ Color black $ Text "Win!"
-                        loseText = Translate (- windowWidthFloat / 3) 0 $ Color black $ Text "Lose"
-                        ball = uncurry Translate ballPos (circleSolid ballRadius)
+                        tutorialTest = Translate (-windowWidthFloat * 3.5) 350 $ Color yellow $ Text "Hello"
+                        
+                        nameGame = Translate (-windowWidthFloat * 2.1 ) 320 $ Color azure $ Text "ARKANOID"
+                        nameGame2 = Translate (-windowWidthFloat * 2.08 ) 324 $ Color magenta $ Text "ARKANOID"
+                        nameGame3 = Translate (-windowWidthFloat * 2.09 ) 323 $ Color cyan $ Text "ARKANOID"
+
+                        tutorialTextRestart = Translate (-windowWidthFloat * 1.5) 150 $ Color white $ Text "'R' - restart"
+                        tutorialTestControl = Translate (-windowWidthFloat * 1.5) 0 $ Color white $ Text "Control with arrows"
+                        tutorialTextContinue = Translate (-windowWidthFloat * 1.5) (-150) $ Color white $ Text "Press 'Space' to play"
+
+                        winText = Translate (- windowWidthFloat / 4) 0 $ Color yellow $ Text "Win!"
+                        winText2 = Translate (- windowWidthFloat / 4) 2.6 $ Color yellow $ Text "Win!"
+                        winText3= Translate (- windowWidthFloat / 4) 1.6 $ Color yellow $ Text "Win!"
+
+                        loseText = Translate (- windowWidthFloat / 3) 0 $ Color yellow $ Text "Lose"
+                        loseText2 = Translate (- windowWidthFloat / 2.99) 2.6 $ Color yellow $ Text "Lose"
+                        loseText3 = Translate (- windowWidthFloat / 2.99) 1.6 $ Color yellow $ Text "Lose"
+
+                        ball = uncurry Translate ballPos $ Color white (circleSolid ballRadius)
                         bricks = drawGrid grid
                         hitText | lastHit grid == NoHit = Blank
                                 | otherwise = Translate (-windowWidthFloat / 2) 0 $ Color black $ Text (showHit (lastHit grid))
-                        walls = Pictures [
+
+                        wallsCollor = Color cyan (walls)
+                        walls= Pictures [
                           Translate 0 (windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
                           Translate 0 (- windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
                           Translate ((- windowWidthFloat) / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat),
-                          Translate (windowWidthFloat / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat)]
-                        platformBorder = Color white $ rectangleSolid 1 platformHeight
+                          Translate (windowWidthFloat / 2.0) 0 (rectangleSolid wallsWidth windowHeightFloat)
+                          ]
+
+                        platformBorder = Color white $ rectangleSolid 2 platformHeight
                         platformBorders = Pictures [
                           Translate (fst platformPos + 1 + (platformLength / 2)) (snd platformPos) platformBorder,
                           Translate (fst platformPos - 1 - (platformLength / 2)) (snd platformPos) platformBorder,
-                          uncurry Translate platformPos $ Color white $ circleSolid 1]
+                          uncurry Translate platformPos $ Color white $ circleSolid 3]
                         platform = Pictures [
-                          uncurry Translate platformPos (rectangleSolid platformLength platformHeight),
+                          uncurry Translate platformPos $ Color violet (rectangleSolid platformLength platformHeight),
                           platformBorders]
 
 
--- Handles incoming events
+-- Обрабатывает входящие события
 eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
   | key == KeySpace && view == StartScreen = state{view = LevelView}   -- Handles continue while in start screen
@@ -105,7 +122,7 @@ eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
 eventHandler _ state = state
 
 
--- Runs the game
+-- Запустить игру
 run :: IO()
 run = do
   gen <- getStdGen
