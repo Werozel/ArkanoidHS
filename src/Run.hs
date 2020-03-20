@@ -16,7 +16,7 @@ import DrawFunctions
 
 
 --Возвращает начальное состояние игры
-initState :: Float -> View -> GameState
+initState :: Float -> View ->  GameState
 initState rnd v = GameState False v initBallPos initBallDirection initPlatformPos 0 initGrid 3 NotFinished [NonePressed]
   where
     initBallPos :: Point
@@ -62,10 +62,11 @@ draw :: GameState -> Picture
 draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextRestart,tutorialTest, tutorialTestControl, tutorialTextContinue]
                     | result == Win = Pictures [winText, winText2, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor]
                     | result == Lose = Pictures [loseText, loseText2, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor]
+
                     | otherwise = Pictures [ball, nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor]
                       where
-                        tutorialTest = Translate (-windowWidthFloat * 3.5) 350 $ Color yellow $ Text "Hello"
-                        
+                        tutorialTest = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Pause"
+
                         nameGame = Translate (-windowWidthFloat * 2.1 ) 320 $ Color azure $ Text "ARKANOID"
                         nameGame2 = Translate (-windowWidthFloat * 2.08 ) 324 $ Color magenta $ Text "ARKANOID"
                         nameGame3 = Translate (-windowWidthFloat * 2.09 ) 323 $ Color cyan $ Text "ARKANOID"
@@ -108,6 +109,8 @@ draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorial
 -- Обрабатывает входящие события
 eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
+  |key == KeyDown = state{view = StartScreen} -- Pause
+
   | key == KeySpace && view == StartScreen = state{view = LevelView}   -- Handles continue while in start screen
   | view /= LevelView = state   -- Filters all inputs if not playing right now
   -- Left arrow key moves platform to the left
@@ -125,5 +128,7 @@ eventHandler _ state = state
 -- Запустить игру
 run :: IO()
 run = do
+  putStrLn "Hello, what's your name?"
+  name <-getLine
   gen <- getStdGen
-  play window bgColor fps (initState (fst (randomR randRange gen)) StartScreen) draw eventHandler tick
+  play  window bgColor  fps  (initState (fst (randomR randRange gen ))  StartScreen ) draw eventHandler tick
