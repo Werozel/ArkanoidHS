@@ -17,7 +17,7 @@ import DrawFunctions
 
 --Возвращает начальное состояние игры
 initState :: Float -> View ->  GameState
-initState rnd v = GameState False v initBallPos initBallDirection initPlatformPos 0 initGrid 3 NotFinished [NonePressed]
+initState rnd v  = GameState False v  initBallPos initBallDirection initPlatformPos 0 initGrid 3 NotFinished [NonePressed]
   where
     initBallPos :: Point
     initBallPos = (0, initBallPositionY)
@@ -40,6 +40,7 @@ tick _ state@GameState{..} | view /= LevelView = state
                               GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
                            | result == Lose =
                               GameState False LevelView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
+                           |view /= LevelView = state
                            | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
                             where
                               newBallPos = moveBall ballPos ballDirection
@@ -62,7 +63,7 @@ draw :: GameState -> Picture
 draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextRestart,tutorialTest, tutorialTestControl, tutorialTextContinue]
                     | result == Win = Pictures [winText, winText2, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor]
                     | result == Lose = Pictures [loseText, loseText2, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor]
-
+                    | view == Pause = Scale 0.35 0.35 $ Pictures [tutorialTest]
                     | otherwise = Pictures [ball, nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor]
                       where
                         tutorialTest = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Pause"
@@ -110,7 +111,7 @@ draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorial
 eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
   |key == KeyDown = state{view = StartScreen} -- Pause
-
+  |key == KeyUp = state{view = Pause}
   | key == KeySpace && view == StartScreen = state{view = LevelView}   -- Handles continue while in start screen
   | view /= LevelView = state   -- Filters all inputs if not playing right now
   -- Left arrow key moves platform to the left
@@ -131,4 +132,4 @@ run = do
   putStrLn "Hello, what's your name?"
   name <-getLine
   gen <- getStdGen
-  play  window bgColor  fps  (initState (fst (randomR randRange gen ))  StartScreen ) draw eventHandler tick
+  play  window bgColor fps (initState (fst (randomR randRange gen ))  StartScreen) draw eventHandler tick
