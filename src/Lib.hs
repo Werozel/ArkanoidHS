@@ -31,7 +31,7 @@ data BricksGrid = BricksGrid {
 -- Result of a game
 data Result = Win | Lose | NoTime | NotFinished deriving Eq
 -- Текущее меню или уровень
-data View = MainMenu | ResultsMenu | SettingsMenu | LevelView | StartScreen deriving Eq
+data View = MainMenu | ResultsMenu | SettingsMenu | LevelView | StartScreen | Pause deriving Eq
 
 data KeyPressed = LeftPressed | RightPressed | NonePressed deriving Eq
 type KeysPressed = [KeyPressed]
@@ -55,7 +55,8 @@ data GameState = GameState {
 bgColor :: Color
 bgColor = black
 
-
+helloStr :: String -> Picture
+helloStr name = translate (-650) (220) $ scale 0.2 0.2 $ color yellow $ text ("Welcome " ++ name ++ " !")
 -- Окно для игры
 window :: Display
 window = FullScreen
