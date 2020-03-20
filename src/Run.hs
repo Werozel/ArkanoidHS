@@ -60,13 +60,14 @@ tick _ state@GameState{..} | view /= LevelView = state
 
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> Picture
-draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextRestart,tutorialTest, tutorialTestControl, tutorialTextContinue]
+draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextRestart,helloStr, tutorialTestControl, tutorialTextContinue]
                     | result == Win = Pictures [winText, winText2, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor]
                     | result == Lose = Pictures [loseText, loseText2, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor]
                     | view == Pause = Scale 0.35 0.35 $ Pictures [tutorialTest]
                     | otherwise = Pictures [ball, nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor]
                       where
                         tutorialTest = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Pause"
+                        helloStr = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Hello"
 
                         nameGame = Translate (-windowWidthFloat * 2.1 ) 320 $ Color azure $ Text "ARKANOID"
                         nameGame2 = Translate (-windowWidthFloat * 2.08 ) 324 $ Color magenta $ Text "ARKANOID"
