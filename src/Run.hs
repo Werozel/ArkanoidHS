@@ -60,22 +60,27 @@ tick _ state@GameState{..} | view /= LevelView = state
 
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> Picture
-draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextRestart,helloStr, tutorialTestControl, tutorialTextContinue]
+draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextW,helloStr, tutorialTextContinue]
                     | result == Win = Pictures [winText, winText2, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor]
                     | result == Lose = Pictures [loseText, loseText2, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor]
-                    | view == Pause = Scale 0.35 0.35 $ Pictures [tutorialTest]
+                    | view == Pause = Scale 0.50 0.50 $ Pictures [paused, paused2]
                     | otherwise = Pictures [ball, nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor]
                       where
-                        tutorialTest = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Pause"
-                        helloStr = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Hello"
+                        paused = Translate (-windowWidthFloat * 0.67) 50 $ Color yellow $ Text "PAUSED"
+                        paused2 = Translate (-windowWidthFloat * 0.66) 50 $ Color yellow $ Text "PAUSED"
+
+                        helloStr = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Hello, Artem "
 
                         nameGame = Translate (-windowWidthFloat * 2.1 ) 320 $ Color azure $ Text "ARKANOID"
                         nameGame2 = Translate (-windowWidthFloat * 2.08 ) 324 $ Color magenta $ Text "ARKANOID"
                         nameGame3 = Translate (-windowWidthFloat * 2.09 ) 323 $ Color cyan $ Text "ARKANOID"
 
-                        tutorialTextRestart = Translate (-windowWidthFloat * 1.5) 150 $ Color white $ Text "'R' - restart"
-                        tutorialTestControl = Translate (-windowWidthFloat * 1.5) 0 $ Color white $ Text "Control with arrows"
-                        tutorialTextContinue = Translate (-windowWidthFloat * 1.5) (-150) $ Color white $ Text "Press 'Space' to play"
+                        menuTextRestrat = Translate (-windowWidthFloat * 1.5) 150 $ Color white $ Text "- Welcome"
+                        menuTextControl1 = Translate (-windowWidthFloat * 1.5) 0 $ Color white $ Text "to the game"
+                        menuTwxtContinue = Translate (-windowWidthFloat * 1.5) (-150) $ Color white $ Text "Press 'Space' to play"
+
+                        tutorialTextW = Translate (-windowWidthFloat * 2.5) 110 $ Color white $ Text "Welcome to the game ARKANOID!"
+                        tutorialTextContinue = Translate (-windowWidthFloat * 1.5) (-100) $ Color white $ Text "Press 'Space' to play"
 
                         winText = Translate (- windowWidthFloat / 4) 0 $ Color yellow $ Text "Win!"
                         winText2 = Translate (- windowWidthFloat / 4) 2.6 $ Color yellow $ Text "Win!"
@@ -111,10 +116,10 @@ draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorial
 -- Обрабатывает входящие события
 eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
-  |key == KeyDown = state{view = StartScreen} -- Pause
-  |key == KeyUp = state{view = Pause}
-  | key == KeySpace && view == StartScreen = state{view = LevelView}   -- Handles continue while in start screen
-  | view /= LevelView = state   -- Filters all inputs if not playing right now
+
+  |key == KeySpace && view == Pause = state{view = LevelView}
+  |key == KeySpace && view == StartScreen = state{view = LevelView}   -- Handles continue while in start screen
+  | view /= LevelView = state   -- Фильтрует все входные сигналы если не играет прямо сейчас
   -- Left arrow key moves platform to the left
   | key == KeyLeft = state {keysPressed = if keyState == Down then LeftPressed:keysPressed else delete LeftPressed keysPressed}
   -- Right arrow key moves platform to the right
@@ -122,6 +127,7 @@ eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
   | otherwise = state
 eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
   | view /= LevelView = state
+  | c == 'f' = state{view = Pause}
   | c == 'r' || c == 'к' = initState 25 LevelView    -- Handles restart button
   | otherwise = state
 eventHandler _ state = state
