@@ -61,10 +61,11 @@ tick _ state@GameState{..} | view /= LevelView = state
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> Picture
 draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextW,helloStr, tutorialTextContinue]
-                    | result == Win = Pictures [winText, winText2, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor]
-                    | result == Lose = Pictures [loseText, loseText2, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor]
+                    | view == Menu = Scale 0.35 0.35 $ Pictures [menuTextRestrat,menuTextControl1,menuTwxtContinue ]
+                    | result == Win = Pictures [winText, winText2, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu]
+                    | result == Lose = Pictures [loseText, loseText2, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu]
                     | view == Pause = Scale 0.50 0.50 $ Pictures [paused, paused2]
-                    | otherwise = Pictures [ball, nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor]
+                    | otherwise = Pictures [ball, nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu,menu2]
                       where
                         paused = Translate (-windowWidthFloat * 0.67) 50 $ Color yellow $ Text "PAUSED"
                         paused2 = Translate (-windowWidthFloat * 0.66) 50 $ Color yellow $ Text "PAUSED"
@@ -74,6 +75,9 @@ draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorial
                         nameGame = Translate (-windowWidthFloat * 2.1 ) 320 $ Color azure $ Text "ARKANOID"
                         nameGame2 = Translate (-windowWidthFloat * 2.08 ) 324 $ Color magenta $ Text "ARKANOID"
                         nameGame3 = Translate (-windowWidthFloat * 2.09 ) 323 $ Color cyan $ Text "ARKANOID"
+                        menu = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.1) 150 $ Color magenta $ Text " Press m - to enter MENU"
+                        menu2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.121) 151 $ Color magenta $ Text " Press m - to enter MENU"
+
 
                         menuTextRestrat = Translate (-windowWidthFloat * 1.5) 150 $ Color white $ Text "- Welcome"
                         menuTextControl1 = Translate (-windowWidthFloat * 1.5) 0 $ Color white $ Text "to the game"
@@ -116,7 +120,7 @@ draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorial
 -- Обрабатывает входящие события
 eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
-
+  |key == KeySpace && view == Menu = state {view = LevelView}
   |key == KeySpace && view == Pause = state{view = LevelView}
   |key == KeySpace && view == StartScreen = state{view = LevelView}   -- Handles continue while in start screen
   | view /= LevelView = state   -- Фильтрует все входные сигналы если не играет прямо сейчас
@@ -127,6 +131,7 @@ eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
   | otherwise = state
 eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
   | view /= LevelView = state
+  | c == 'm' = state{view = Menu}
   | c == 'f' = state{view = Pause}
   | c == 'r' || c == 'к' = initState 25 LevelView    -- Handles restart button
   | otherwise = state
