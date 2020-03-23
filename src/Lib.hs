@@ -55,8 +55,6 @@ data GameState = GameState {
 bgColor :: Color
 bgColor = black
 
-helloStr :: String -> Picture
-helloStr name = translate (-650) (220) $ scale 0.2 0.2 $ color yellow $ text ("Welcome " ++ name ++ " !")
 -- Окно для игры
 window :: Display
 window = FullScreen

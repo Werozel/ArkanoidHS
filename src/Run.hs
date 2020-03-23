@@ -60,7 +60,7 @@ tick _ state@GameState{..} | view /= LevelView = state
 
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> Picture
-draw GameState {..} | view == StartScreen = Scale 0.35 0.35 $ Pictures [tutorialTextW,helloStr, tutorialTextContinue]
+draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [tutorialTextW,helloStr, tutorialTextContinue]
                     | view == Menu = Scale 0.45 0.45 $ Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon]
                     | result == Win = Pictures [winText, winText2, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2]
                     | result == Lose = Pictures [loseText, loseText2, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2]
@@ -96,7 +96,7 @@ draw GameState {..} | view == StartScreen = Scale 0.35 0.35 $ Pictures [tutorial
                         menuTextPaused = Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 0 $ Color white $ Text "- 'F' paused game"
                         menuTextEsc = Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) (-150) $ Color white $ Text "- 'Esc' to exit game "
                         menuTextContine = Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) (-300) $ Color white $ Text "- Press 'Space' to play"
-                        menuTextBon = Scale 0.70 0.70 $  Translate (-windowWidthFloat * 1.6) (-750) $ Color white $ Text "Hitting a corner of a brick - one shot it"
+                        menuTextBon = Scale 0.65 0.70 $  Translate (-windowWidthFloat * 1.6) (-750) $ Color white $ Text "Hitting a corner of a brick - one shot it"
 
                         tutorialTextW = Translate (-windowWidthFloat * 2.5) 110 $ Color white $ Text "Welcome to the game ARKANOID!"
                         tutorialTextContinue = Translate (-windowWidthFloat * 1.5) (-100) $ Color white $ Text "Press 'Enter' to play"
@@ -152,6 +152,8 @@ eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
   | otherwise = state
 eventHandler _ state = state
 
+helloStr :: String -> Picture
+helloStr name = translate (-650) (220) $ scale 0.2 0.2 $ color yellow $ text ("Welcome " ++ name ++ " !")
 
 -- Запустить игру
 run :: IO()
