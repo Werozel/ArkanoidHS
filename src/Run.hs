@@ -60,7 +60,7 @@ tick _ state@GameState{..} | view /= LevelView = state
 
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> Picture
-draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorialTextW,helloStr, tutorialTextContinue]
+draw GameState {..} | view == StartScreen = Scale 0.35 0.35 $ Pictures [tutorialTextW,helloStr, tutorialTextContinue]
                     | view == Menu = Scale 0.45 0.45 $ Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon]
                     | result == Win = Pictures [winText, winText2, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2]
                     | result == Lose = Pictures [loseText, loseText2, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2]
@@ -70,7 +70,7 @@ draw GameState {..} | view == StartScreen = Scale 0.25 0.25 $ Pictures [tutorial
                         paused = Translate (-windowWidthFloat * 0.67) 50 $ Color yellow $ Text "PAUSED"
                         paused2 = Translate (-windowWidthFloat * 0.66) 50 $ Color yellow $ Text "PAUSED"
 
-                        helloStr = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Hello, Artem "
+                        helloStr = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Hello"
 
                         nameGame = Translate (-windowWidthFloat * 2.1 ) 320 $ Color azure $ Text "ARKANOID"
                         nameGame2 = Translate (-windowWidthFloat * 2.08 ) 324 $ Color magenta $ Text "ARKANOID"
