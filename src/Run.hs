@@ -76,7 +76,7 @@ draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr
                         nameBoy3 = Scale 0.72 0.72 $ Rotate (-90)  $ Translate (-387) (-424) $ Color magenta $ Text "GAMEBOY"
 
 
-                        gameboy = Color azure (gameboys)
+                        gameboy = Color azure gameboys
                         gameboys = Pictures [
                           Translate 110 (-400)  $ Color (dark chartreuse) (circleSolid 22),
                           Translate 106 (-400) $ Color chartreuse (circleSolid 20),
