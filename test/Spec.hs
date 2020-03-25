@@ -1,12 +1,12 @@
 {-# LANGUAGE RecordWildCards #-}
 
-import System.Timeout
-import Run
-import Data.Maybe (isNothing)
-import System.Exit
-import Lib
-import Constants
-import Base
+import           Base
+import           Constants
+import           Data.Maybe     (isNothing)
+import           Lib
+import           Run
+import           System.Exit
+import           System.Timeout
 
 main :: IO ()
 -- main = putStrLn "Тестовый набор еще не реализован"

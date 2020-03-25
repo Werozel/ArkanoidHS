@@ -1,17 +1,17 @@
 module Lib where
 
-import Graphics.Gloss.Interface.Pure.Game
+import           Graphics.Gloss.Interface.Pure.Game
 
-import Data.Time.Clock
+import           Data.Time.Clock
 
-import System.Random
+import           System.Random
 
-import Constants
+import           Constants
 
 -- Кирпичная структура данных
 data Brick = Brick {
   position :: Point,
-  size :: Point,
+  size     :: Point,
   hitsLeft :: Int
 } | NoBrick
 
@@ -24,7 +24,7 @@ data Hit = LeftHit | TopHit | RightHit | BottomHit |
 type BricksGridRow = [Brick]
 -- All bricks
 data BricksGrid = BricksGrid {
-  bricks :: [BricksGridRow],
+  bricks  :: [BricksGridRow],
   lastHit :: Hit
 }
 
@@ -39,16 +39,16 @@ type KeysPressed = [KeyPressed]
 -- Структура данных о состоянии игры
 -- Point = (Float, Float)
 data GameState = GameState {
-  isPlaying :: Bool, --  флаг указывает на то, что игра находится в процессе ожидания запуска
-  view :: View, -- указывает, в каком состоянии находится окно
-  ballPos :: Point, -- текущее положение шара
+  isPlaying     :: Bool, --  флаг указывает на то, что игра находится в процессе ожидания запуска
+  view          :: View, -- указывает, в каком состоянии находится окно
+  ballPos       :: Point, -- текущее положение шара
   ballDirection :: Vector, -- Vector = Point;текущее направление шара
-  platformPos :: Point, -- текущее положение платформы
-  level :: Int, -- Current level (if playing, else = 0)
-  grid :: BricksGrid, -- расположение кирпичей
-  bricksLeft :: Int, -- кирпичи, оставленные для удаления
-  result :: Result, -- Результат игры или Неоконченный флаг
-  keysPressed :: KeysPressed-- Key that is pressed at the momen
+  platformPos   :: Point, -- текущее положение платформы
+  level         :: Int, -- Current level (if playing, else = 0)
+  grid          :: BricksGrid, -- расположение кирпичей
+  bricksLeft    :: Int, -- кирпичи, оставленные для удаления
+  result        :: Result, -- Результат игры или Неоконченный флаг
+  keysPressed   :: KeysPressed-- Key that is pressed at the momen
 
 }
 
@@ -64,13 +64,13 @@ window = FullScreen
 
 -- Преобразует Hit на строку для функции Show
 showHit :: Hit -> String
-showHit TopHit = "TopHit"
-showHit BottomHit = "BottomHit"
-showHit LeftHit = "LeftHit"
-showHit RightHit = "RightHit"
-showHit LeftTopHit = "LeftTopHit"
-showHit RightTopHit = "RightTopHit"
-showHit LeftBottomHit = "LeftBottomHit"
+showHit TopHit         = "TopHit"
+showHit BottomHit      = "BottomHit"
+showHit LeftHit        = "LeftHit"
+showHit RightHit       = "RightHit"
+showHit LeftTopHit     = "LeftTopHit"
+showHit RightTopHit    = "RightTopHit"
+showHit LeftBottomHit  = "LeftBottomHit"
 showHit RightBottomHit = "RightBottomHit"
-showHit PlatformHit = "PlatfromHit"
-showHit _ = "UnknownHit"
+showHit PlatformHit    = "PlatfromHit"
+showHit _              = "UnknownHit"

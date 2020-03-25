@@ -1,9 +1,9 @@
 {-# LANGUAGE RecordWildCards #-}
 module DrawFunctions where
 
-import Graphics.Gloss.Interface.Pure.Game
+import           Graphics.Gloss.Interface.Pure.Game
 
-import Lib
+import           Lib
 
 
 -- Рисует полную сетку блоков
@@ -13,7 +13,7 @@ drawGrid BricksGrid{..} = drawBricks bricks
 
 drawBricks :: [[Brick]] -> Picture
 drawBricks (row:xs) = Pictures [drawBricksRow row, drawBricks xs]
-drawBricks _ = Pictures [Blank]
+drawBricks _        = Pictures [Blank]
 
 
 -- Рисует один ряд кирпичей

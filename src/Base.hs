@@ -1,10 +1,10 @@
 {-# LANGUAGE RecordWildCards #-}
 module Base where
 
-import Graphics.Gloss.Interface.Pure.Game
+import           Graphics.Gloss.Interface.Pure.Game
 
-import Lib
-import Constants
+import           Constants
+import           Lib
 
 
 -- Возвращает новое положение шара на ТИКе
@@ -136,7 +136,7 @@ detectHit currPos (row: xs) | resHit == NoHit = BricksGrid (row : bricks) lastHi
 
 -- Результирующие данные из функции checkPlatformHit
 data PlatformHitResult = PlatformHitResult {
-  hitFlag :: Bool,
+  hitFlag               :: Bool,
   fromPlatformDirection :: Point -- New ball direction if ball hit the platform
 }
 
@@ -183,9 +183,9 @@ checkAndMovePlatformRight state@GameState{..}
 
 -- Возвращает количество кирпичей, оставшихся в строке
 getRemainingBricksCountRow :: BricksGridRow -> Int
-getRemainingBricksCountRow [] = 0
+getRemainingBricksCountRow []             = 0
 getRemainingBricksCountRow (NoBrick : xs) = getRemainingBricksCountRow xs
-getRemainingBricksCountRow _ = 1
+getRemainingBricksCountRow _              = 1
 
 -- Returns number of bricks left on the leve
 getRemainingBricksCount :: BricksGrid -> Int

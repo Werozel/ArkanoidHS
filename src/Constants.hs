@@ -1,6 +1,6 @@
 module Constants where
 
-import Graphics.Gloss.Interface.Pure.Game
+import           Graphics.Gloss.Interface.Pure.Game
 
 -- Возвращает fps для игры
 fps :: Int

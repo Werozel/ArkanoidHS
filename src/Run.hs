@@ -3,16 +3,16 @@ module Run
   ( run, tick, initState
   ) where
 
-import Graphics.Gloss.Interface.Pure.Game
+import           Graphics.Gloss.Interface.Pure.Game
 
-import System.Random
-import Data.List
+import           Data.List
+import           System.Random
 
-import Lib
-import Constants
-import Base
-import LevelGenerator
-import DrawFunctions
+import           Base
+import           Constants
+import           DrawFunctions
+import           LevelGenerator
+import           Lib
 
 
 --Возвращает начальное состояние игры
