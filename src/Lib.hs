@@ -48,8 +48,11 @@ data GameState = GameState {
   grid :: BricksGrid, -- расположение кирпичей
   bricksLeft :: Int, -- кирпичи, оставленные для удаления
   result :: Result, -- Результат игры или Неоконченный флаг
-  keysPressed :: KeysPressed -- Key that is pressed at the momen
+  keysPressed :: KeysPressed-- Key that is pressed at the momen
+
 }
+
+
 
 -- Возвращает цвет фона для окна
 bgColor :: Color

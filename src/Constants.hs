@@ -18,6 +18,9 @@ testSeconds = 10
 windowWidthFloat :: Float
 windowWidthFloat = fromIntegral windowWidth
 
+windowWidthScore :: Float
+windowWidthScore = 100
+
 windowWidth :: Int
 windowWidth = 400
 
