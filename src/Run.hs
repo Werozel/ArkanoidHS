@@ -158,7 +158,7 @@ draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr
                         hitText | lastHit grid == NoHit = Blank
                                 | otherwise = Translate (-windowWidthFloat / 2) 0 $ Color black $ Text (showHit (lastHit grid))
 
-                        wallsCollor = Color cyan (walls)
+                        wallsCollor = Color cyan walls
                         walls= Pictures [
                           Translate 0 (windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
                           Translate 0 (- windowHeightFloat / 2.0) (rectangleSolid windowWidthFloat wallsWidth),
