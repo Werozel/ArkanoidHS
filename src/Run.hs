@@ -202,7 +202,7 @@ eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
 eventHandler _ state = state
 
 helloStr :: String -> Picture
-helloStr name = Translate (-650) (220) $ Scale 0.2 0.2 $ Color yellow $ Text ("Welcome " ++ name ++ " !")
+helloStr name = Translate (-650) 220 $ Scale 0.2 0.2 $ Color yellow $ Text ("Welcome " ++ name ++ " !")
 
 -- Запустить игру
 run :: IO()
