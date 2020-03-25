@@ -97,7 +97,7 @@ draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr
                           Translate (-130) (-370) $ Color (dark cyan) (rectangleSolid 90 35),
 
                           Rotate (-30) $ Translate (17) (401) (rectangleSolid windowWidthScore wallsWidth),
-                          Rotate (-30) $ Translate (404) (174) (rectangleSolid windowWidthScore wallsWidth),
+                          Rotate (-30) $ Translate (404) 174 (rectangleSolid windowWidthScore wallsWidth),
                           Rotate (-30) $ Translate 21 (-500) (rectangleSolid windowWidthScore wallsWidth),
                           Translate 18 328 (rectangleSolid windowWidthFloat wallsWidth), -- вверх 1 слой
                           Translate (-30) 328 (rectangleSolid windowWidthFloat wallsWidth), -- вверх 1 слой
