@@ -108,7 +108,7 @@ draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr
                           Translate (-225) 29 (rectangleSolid wallsWidth windowHeightFloat),  -- бок 1 слой
                           Translate (-225) (-150) (rectangleSolid wallsWidth windowHeightFloat),
                           Translate 107 378 (rectangleSolid windowWidthFloat wallsWidth), -- вверх 2 слой
-                          Translate (50) 378 (rectangleSolid windowWidthFloat wallsWidth),
+                          Translate 50 378 (rectangleSolid windowWidthFloat wallsWidth),
                           Translate 309 80 (rectangleSolid wallsWidth windowHeightFloat),  -- бок 2 слой
                           Translate 309 (-97) (rectangleSolid wallsWidth windowHeightFloat)]
 
