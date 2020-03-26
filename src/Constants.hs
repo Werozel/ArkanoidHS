@@ -2,7 +2,7 @@ module Constants where
 
 import Graphics.Gloss.Interface.Pure.Game
 
--- Returns fps for the game
+-- Возвращает fps для игры
 fps :: Int
 fps = 120
 
@@ -10,18 +10,21 @@ fps = 120
 secondsInMinute :: Int
 secondsInMinute = 60
 
--- Returns seconds to test game
+-- Возвращает секунды для тестирования игры
 testSeconds :: Int
 testSeconds = 10
 
--- Returns width for window
+-- Ширина деклараций за окном
 windowWidthFloat :: Float
 windowWidthFloat = fromIntegral windowWidth
+
+windowWidthScore :: Float
+windowWidthScore = 100
 
 windowWidth :: Int
 windowWidth = 400
 
--- Returns height for window
+-- Возвращает высоту окна
 windowHeightFloat :: Float
 windowHeightFloat = fromIntegral windowHeight
 
@@ -98,4 +101,3 @@ brickLength = 50
 -- Returns single hit count
 singleHit :: Int
 singleHit = 1
-

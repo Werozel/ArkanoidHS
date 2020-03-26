@@ -8,7 +8,7 @@ import System.Random
 
 import Constants
 
--- Brick data structure
+-- Кирпичная структура данных
 data Brick = Brick {
   position :: Point,
   size :: Point,
@@ -16,11 +16,11 @@ data Brick = Brick {
 } | NoBrick
 
 
--- Types of ball hit
+-- виды ударов по мячу
 data Hit = LeftHit | TopHit | RightHit | BottomHit |
            LeftTopHit | RightTopHit | LeftBottomHit | RightBottomHit |
            NoHit | PlatformHit deriving Eq
--- A single row from a grid
+-- Одна строка из сетки
 type BricksGridRow = [Brick]
 -- All bricks
 data BricksGrid = BricksGrid {
@@ -30,37 +30,39 @@ data BricksGrid = BricksGrid {
 
 -- Result of a game
 data Result = Win | Lose | NoTime | NotFinished deriving Eq
--- Current menu or level
-data View = MainMenu | ResultsMenu | SettingsMenu | LevelView | StartScreen deriving Eq
+-- Текущее меню или уровень
+data View = MainMenu | ResultsMenu | SettingsMenu | LevelView | StartScreen | Pause | Menu deriving Eq
 
 data KeyPressed = LeftPressed | RightPressed | NonePressed deriving Eq
 type KeysPressed = [KeyPressed]
 
--- Game state data structure
+-- Структура данных о состоянии игры
 -- Point = (Float, Float)
 data GameState = GameState {
-  isPlaying :: Bool, -- Flag indicates weather a game is in progress of waiting to be started
-  view :: View, -- Specifies what state has the window
-  ballPos :: Point, -- Current position of a ball
-  ballDirection :: Vector, -- Vector = Point; Current direction of a ball
-  platformPos :: Point, -- Current position of a platform
+  isPlaying :: Bool, --  флаг указывает на то, что игра находится в процессе ожидания запуска
+  view :: View, -- указывает, в каком состоянии находится окно
+  ballPos :: Point, -- текущее положение шара
+  ballDirection :: Vector, -- Vector = Point;текущее направление шара
+  platformPos :: Point, -- текущее положение платформы
   level :: Int, -- Current level (if playing, else = 0)
-  grid :: BricksGrid, -- Bricks layout
-  bricksLeft :: Int, -- Bricks left to be removed
-  result :: Result, -- result of a game or NotFinished flag
-  keysPressed :: KeysPressed -- Key that is pressed at the moment
+  grid :: BricksGrid, -- расположение кирпичей
+  bricksLeft :: Int, -- кирпичи, оставленные для удаления
+  result :: Result, -- Результат игры или Неоконченный флаг
+  keysPressed :: KeysPressed-- Key that is pressed at the momen
+
 }
 
--- Returns background color for window
+
+
+-- Возвращает цвет фона для окна
 bgColor :: Color
-bgColor = greyN bgGreyN
+bgColor = black
 
-
--- Returns window for the game
+-- Окно для игры
 window :: Display
-window = InWindow "Arkanoid" (windowWidth, windowHeight) (windowOffsetX, windowOffsetY)
+window = FullScreen
 
--- Converts Hit to String for Show function
+-- Преобразует Hit на строку для функции Show
 showHit :: Hit -> String
 showHit TopHit = "TopHit"
 showHit BottomHit = "BottomHit"
@@ -72,5 +74,3 @@ showHit LeftBottomHit = "LeftBottomHit"
 showHit RightBottomHit = "RightBottomHit"
 showHit PlatformHit = "PlatfromHit"
 showHit _ = "UnknownHit"
-
-
