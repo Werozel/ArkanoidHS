@@ -62,13 +62,13 @@ tick _ state@GameState{..} | view /= LevelView = state
 draw :: GameState -> Picture
 draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr,tutorialTextW, tutorialTextContinue]
                     | view == Menu = Scale 0.45 0.45 $ Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon]
-                    | result == Win = Pictures [winText, winText2,gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2,nameBoy,nameBoy2,nameBoy3]
-                    | result == Lose = Pictures [loseText, loseText2,gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, nameBoy,nameBoy2,nameBoy3]
-                    | view == Pause = Scale 0.50 0.50 $ Pictures [paused, paused2]
-                    | otherwise = Pictures [ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3]
+                    | result == Win = Pictures [winText, menuSpace, menuSpace2, winText2,gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2,nameBoy,nameBoy2,nameBoy3]
+                    | result == Lose = Pictures [loseText, menuSpace, menuSpace2, loseText2,gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, nameBoy,nameBoy2,nameBoy3]
+                    | view == Pause = Pictures [paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3]
+                    | otherwise = Pictures [ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3]
                       where
-                        paused = Translate (-windowWidthFloat * 0.67) 50 $ Color yellow $ Text "PAUSED"
-                        paused2 = Translate (-windowWidthFloat * 0.66) 50 $ Color yellow $ Text "PAUSED"
+                        paused = Scale 0.35 0.35 $ Translate (-windowWidthFloat * 0.67) 0 $ Color yellow $ Text "PAUSED"
+                        paused2 = Scale 0.35 0.35 $  Translate (-windowWidthFloat * 0.66) 0 $ Color yellow $ Text "PAUSED"
 
 
                         nameBoy = Scale 0.72 0.72 $ Rotate (-90) $ Translate (-380) (-420) $ Color cyan $ Text "GAMEBOY"
@@ -129,6 +129,8 @@ draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr
                         menuRestart2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (-150) $ Color yellow $ Text "| Press 'R' - to Restart  "
                         menuExit = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) (-300) $ Color yellow $ Text "| Press 'Esc' - to exit Game  "
                         menuExit2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (-300) $ Color yellow $ Text "| Press 'Esc' - to exit Game  "
+                        menuSpace = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) (-450) $ Color yellow $ Text "| Press 'Space' - to play Game  "
+                        menuSpace2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (-450) $ Color yellow $ Text "| Press 'Space' - to play Game  "
 
                         menuText =  Translate (-windowWidthFloat * 1.7) 370 $ Color yellow $ Text "Menu"
                         menuText2 =  Translate (-windowWidthFloat * 1.69) 370 $ Color yellow $ Text "Menu"
@@ -207,7 +209,5 @@ helloStr name = Translate (-650) 220 $ Scale 0.2 0.2 $ Color yellow $ Text ("Wel
 -- Запустить игру
 run :: IO()
 run = do
-  putStrLn "Hello, what's your name?"
-
   gen <- getStdGen
   play  window bgColor fps (initState (fst (randomR randRange gen ))  StartScreen ) draw eventHandler tick
