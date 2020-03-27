@@ -63,6 +63,10 @@ eventHandler :: Event -> GameState -> GameState
 eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
   |key == KeySpace && view == Menu = state {view = LevelView}
   |key == KeySpace && view == Pause = state{view = LevelView}
+  |key == KeyF3 = state{view = Menu}
+  |key == KeyF2 = state{view = Pause}
+  |key == KeyF1 && view == Pause = initState 25 LevelView
+  |key == KeyF1 && view == LevelView = initState 25 LevelView
   |key == KeyEnter && view == StartScreen = state{view = Menu}   -- Handles continue while in start screen
   | view /= LevelView = state   -- Фильтрует все входные сигналы если не играет прямо сейчас
   -- Left arrow key moves platform to the left
@@ -72,14 +76,12 @@ eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
   | otherwise = state
 eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
   | view /= LevelView = state
-  | c == 'm' = state{view = Menu}
-  | c == 'f' = state{view = Pause}
-  | c == 'r' = initState 25 LevelView    -- Handles restart button
+  -- | c == 'm' = state{view = Menu}
+--   | c == 'f' = state{view = Pause}
   | otherwise = state
 eventHandler _ state = state
 
-helloStr :: String -> Picture
-helloStr name = Translate (-650) 220 $ Scale 0.2 0.2 $ Color yellow $ Text ("Welcome " ++ name ++ " !")
+
 
 -- Запустить игру
 run :: IO()
