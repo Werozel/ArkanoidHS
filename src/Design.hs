@@ -14,20 +14,53 @@ import DrawFunctions
 
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> Picture
-draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr,tutorialTextW, tutorialTextContinue]
-                    | view == Menu = Scale 0.45 0.45 $ Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon]
-                    | result == Win = Pictures [winText, menuSpace, menuSpace2, winText2,gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2,nameBoy,nameBoy2,nameBoy3]
-                    | result == Lose = Pictures [loseText, menuSpace, menuSpace2, loseText2,gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, nameBoy,nameBoy2,nameBoy3]
-                    | view == Pause = Pictures [paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3]
-                    | otherwise = Pictures [ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3]
+draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [startScreen]
+                    | view == Menu = Scale 0.45 0.45 $ Pictures [menu]
+                    | result == Win = Pictures [namesGame, winGame, help, gameboy, platform, wallsCollor, bricks, ball]
+                    | result == Lose = Pictures [namesGame, loseGame, help, gameboy, platform, wallsCollor, bricks, ball]
+                    | view == Pause = Pictures [namesGame, help, gameboy, platform, wallsCollor, bricks, ball, paused]
+                    | otherwise = Pictures [namesGame, help, gameboy, platform, wallsCollor, bricks, ball]
                       where
-                        paused = Scale 0.35 0.35 $ Translate (-windowWidthFloat * 0.67) 0 $ Color yellow $ Text "PAUSED"
-                        paused2 = Scale 0.35 0.35 $  Translate (-windowWidthFloat * 0.66) 0 $ Color yellow $ Text "PAUSED"
+                        --Pause
+                        paused = pause
+                        pause  = Pictures [
+                          Scale 0.35 0.35 $ Translate (-windowWidthFloat * 0.67) 0 $ Color yellow $ Text "PAUSED",
+                          Scale 0.35 0.35 $  Translate (-windowWidthFloat * 0.66) 0 $ Color yellow $ Text "PAUSED"]
 
-                        nameBoy = Scale 0.72 0.72 $ Rotate (-90) $ Translate (-380) (-420) $ Color cyan $ Text "GAMEBOY"
-                        nameBoy2 =Scale 0.72 0.72 $ Rotate (-90) $ Translate (-384) (-424) $ Color azure $ Text "GAMEBOY"
-                        nameBoy3 = Scale 0.72 0.72 $ Rotate (-90)  $ Translate (-387) (-424) $ Color magenta $ Text "GAMEBOY"
+                      --LevelView
+                        namesGame = name
+                        name = Pictures [
+                          Scale 0.72 0.72 $ Rotate (-90) $ Translate (-380) (-420) $ Color cyan $ Text "GAMEBOY",
+                          Scale 0.72 0.72 $ Rotate (-90) $ Translate (-384) (-424) $ Color azure $ Text "GAMEBOY",
+                          Scale 0.72 0.72 $ Rotate (-90)  $ Translate (-387) (-424) $ Color magenta $ Text "GAMEBOY",
+                          Translate (-windowWidthFloat * 2.0 ) 330 $ Color azure $ Text "ARKANOID",
+                          Translate (-windowWidthFloat * 1.98 ) 334 $ Color magenta $ Text "ARKANOID",
+                          Translate (-windowWidthFloat * 1.99 ) 334 $ Color cyan $ Text "ARKANOID"]
 
+                        winGame = wins
+                        wins = Pictures [
+                            Translate (- windowWidthFloat / 4) 0 $ Color yellow $ Text "Win!",
+                            Translate (- windowWidthFloat / 4) 2.6 $ Color yellow $ Text "Win!",
+                            Translate (- windowWidthFloat / 4) 1.6 $ Color yellow $ Text "Win!"]
+
+                        loseGame = los
+                        los = Pictures [
+                            Translate (- windowWidthFloat / 3) 0 $ Color yellow $ Text "Lose",
+                            Translate (- windowWidthFloat / 2.99) 2.6 $ Color yellow $ Text "Lose",
+                            Translate (- windowWidthFloat / 2.99) 1.6 $ Color yellow $ Text "Lose"]
+
+                        help = helps
+                        helps = Pictures [
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) 150 $ Color yellow $ Text "| Press 'F3' - to enter MENU ",
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) 150 $ Color yellow $ Text "| Press 'F3' - to enter MENU ",
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) 0 $ Color yellow $ Text "| Press 'F2' - to Paused     ",
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) 0 $ Color yellow $ Text "| Press 'F2' - to Paused  ",
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) (-150) $ Color yellow $ Text "| Press 'F1' - to Restart     ",
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) (-150) $ Color yellow $ Text "| Press 'F1' - to Restart  ",
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) (-300) $ Color yellow $ Text "| Press 'Esc' - to exit Game  ",
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) (-300) $ Color yellow $ Text "| Press 'Esc' - to exit Game  ",
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) (-450) $ Color yellow $ Text "| Press 'Space' - to play Game  ",
+                          Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) (-450) $ Color yellow $ Text "| Press 'Space' - to play Game  "]
 
                         gameboy = Color azure gameboys
                         gameboys = Pictures [
@@ -59,50 +92,36 @@ draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr
                           Translate 309 80 (rectangleSolid wallsWidth windowHeightFloat),  -- бок 2 слой
                           Translate 309 (-97) (rectangleSolid wallsWidth windowHeightFloat)]
 
-                        helloStr = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Hello"
 
-                        nameGame = Translate (-windowWidthFloat * 2.0 ) 330 $ Color azure $ Text "ARKANOID"
-                        nameGame2 = Translate (-windowWidthFloat * 1.98 ) 334 $ Color magenta $ Text "ARKANOID"
-                        nameGame3 = Translate (-windowWidthFloat * 1.99 ) 334 $ Color cyan $ Text "ARKANOID"
-                        nameGame4 = Scale 2.1 2.1 $ Translate (-windowWidthFloat * 0.8 ) 280 $ Color azure $ Text "ARKANOID"
-                        nameGame5 = Scale 2.1 2.1 $ Translate (-windowWidthFloat * 0.78 ) 284 $ Color magenta $ Text "ARKANOID"
-                        nameGame6 = Scale 2.1 2.1 $ Translate (-windowWidthFloat * 0.79 ) 284 $ Color cyan $ Text "ARKANOID"
+                        --Menu
+                        menu = menuSetting
+                        menuSetting = Pictures [
+                            Scale 2.1 2.1 $ Translate (-windowWidthFloat * 0.8 ) 280 $ Color azure $ Text "ARKANOID",
+                            Scale 2.1 2.1 $ Translate (-windowWidthFloat * 0.78 ) 284 $ Color magenta $ Text "ARKANOID",
+                            Scale 2.1 2.1 $ Translate (-windowWidthFloat * 0.79 ) 284 $ Color cyan $ Text "ARKANOID",
 
-                        menu = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) 150 $ Color yellow $ Text "| Press 'F3' - to enter MENU "
-                        menu2 = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) 150 $ Color yellow $ Text "| Press 'F3' - to enter MENU "
-                        menuPaused = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) 0 $ Color yellow $ Text "| Press 'F2' - to Paused     "
-                        menuPausd2 = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) 0 $ Color yellow $ Text "| Press 'F2' - to Paused  "
-                        menuRestart = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) (-150) $ Color yellow $ Text "| Press 'F1' - to Restart     "
-                        menuRestart2 = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) (-150) $ Color yellow $ Text "| Press 'F1' - to Restart  "
-                        menuExit = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) (-300) $ Color yellow $ Text "| Press 'Esc' - to exit Game  "
-                        menuExit2 = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) (-300) $ Color yellow $ Text "| Press 'Esc' - to exit Game  "
-                        menuSpace = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.8) (-450) $ Color yellow $ Text "| Press 'Space' - to play Game  "
-                        menuSpace2 = Scale 0.22 0.22 $ Translate (-windowWidthFloat * 8.809) (-450) $ Color yellow $ Text "| Press 'Space' - to play Game  "
+                            Translate (-windowWidthFloat * 1.7) 370 $ Color yellow $ Text "Menu",
+                            Translate (-windowWidthFloat * 1.69) 370 $ Color yellow $ Text "Menu",
+                            Translate (-windowWidthFloat * 1.7) (-370) $ Color yellow $ Text "Bonus",
+                            Translate (-windowWidthFloat * 1.69) (-370) $ Color yellow $ Text "Bonus",
 
-                        menuText =  Translate (-windowWidthFloat * 1.7) 370 $ Color yellow $ Text "Menu"
-                        menuText2 =  Translate (-windowWidthFloat * 1.69) 370 $ Color yellow $ Text "Menu"
-                        menuTextBonus =  Translate (-windowWidthFloat * 1.7) (-370) $ Color yellow $ Text "Bonus"
-                        menuTextBonus2 =  Translate (-windowWidthFloat * 1.69) (-370) $ Color yellow $ Text "Bonus"
+                            Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 300 $ Color white $ Text "- control arrow  <- | ->",
+                            Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 150 $ Color white $ Text "- 'F1' restart game",
+                            Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 0 $ Color white $ Text "- 'F2' paused game",
+                            Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) (-150) $ Color white $ Text "- 'Esc' to exit game ",
+                            Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) (-300) $ Color white $ Text "- Press 'Space' to play",
+                            Scale 0.65 0.70 $  Translate (-windowWidthFloat * 1.6) (-750) $ Color white $ Text "Hitting a corner of a brick - one shot it"]
 
-                        menuTextControl = Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 300 $ Color white $ Text "- control arrow  <- | ->"
-                        menuTextRestrat = Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 150 $ Color white $ Text "- 'F1' restart game"
-                        menuTextPaused = Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 0 $ Color white $ Text "- 'F2' paused game"
-                        menuTextEsc = Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) (-150) $ Color white $ Text "- 'Esc' to exit game "
-                        menuTextContine = Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) (-300) $ Color white $ Text "- Press 'Space' to play"
-                        menuTextBon = Scale 0.65 0.70 $  Translate (-windowWidthFloat * 1.6) (-750) $ Color white $ Text "Hitting a corner of a brick - one shot it"
+                        --StartScreen
+                        startScreen = startScreenSetting
+                        startScreenSetting = Pictures [
+                              Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Hello",
+                              Translate (-windowWidthFloat * 2.5) 110 $ Color white $ Text "Welcome to the game ARKANOID!",
+                              Translate (-windowWidthFloat * 1.5) (-100) $ Color white $ Text "Press 'Enter' to play"]
 
-                        tutorialTextW = Translate (-windowWidthFloat * 2.5) 110 $ Color white $ Text "Welcome to the game ARKANOID!"
-                        tutorialTextContinue = Translate (-windowWidthFloat * 1.5) (-100) $ Color white $ Text "Press 'Enter' to play"
-
-                        winText = Translate (- windowWidthFloat / 4) 0 $ Color yellow $ Text "Win!"
-                        winText2 = Translate (- windowWidthFloat / 4) 2.6 $ Color yellow $ Text "Win!"
-                        winText3= Translate (- windowWidthFloat / 4) 1.6 $ Color yellow $ Text "Win!"
-
-                        loseText = Translate (- windowWidthFloat / 3) 0 $ Color yellow $ Text "Lose"
-                        loseText2 = Translate (- windowWidthFloat / 2.99) 2.6 $ Color yellow $ Text "Lose"
-                        loseText3 = Translate (- windowWidthFloat / 2.99) 1.6 $ Color yellow $ Text "Lose"
 
                         ball = uncurry Translate ballPos $ Color white (circleSolid ballRadius)
+
                         bricks = drawGrid grid
                         hitText | lastHit grid == NoHit = Blank
                                 | otherwise = Translate (-windowWidthFloat / 2) 0 $ Color black $ Text (showHit (lastHit grid))
