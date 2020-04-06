@@ -29,27 +29,27 @@ getBrickColor brick@Brick{..} = newColor
   where newColor | hitsLeft == 3 = yellow
                  | hitsLeft == 2 = orange
                  | hitsLeft == 1 = dark red
-                 
-getGameBoys :: GameState -> Picture
-getGameBoys _ = Pictures [
+
+getGameBoys :: Picture
+getGameBoys = Pictures [
                             Translate 110 (-400)  $ Color (dark chartreuse) (circleSolid 22),
                             Translate 106 (-400) $ Color chartreuse (circleSolid 20),
-  
-  
+
+
                             Translate 110 (-340) $ Color (dark yellow)(circleSolid 22),
                             Translate 106 (-340) $ Color yellow (circleSolid 20),
-  
+
                            Translate 66 (-370) $ Color (dark azure) (circleSolid 22),
                            Translate 62 (-370) $ Color azure (circleSolid 20),
-  
+
                             Translate 156 (-370) $ Color (dark red) (circleSolid 22),
                             Translate 152 (-370) $ Color red (circleSolid 20),
-  
+
                             Translate (-127) (-368) $ Color azure (rectangleSolid 40 100),
                             Translate (-127) (-368) $ Color azure (rectangleSolid 100 40),
                             Translate (-130) (-370) $ Color (dark cyan) (rectangleSolid 35 90),
                             Translate (-130) (-370) $ Color (dark cyan) (rectangleSolid 90 35),
-  
+
                             Rotate (-30) $ Translate 17 401 (rectangleSolid windowWidthScore wallsWidth),
                             Rotate (-30) $ Translate 404 174 (rectangleSolid windowWidthScore wallsWidth),
                             Rotate (-30) $ Translate 21 (-500) (rectangleSolid windowWidthScore wallsWidth),

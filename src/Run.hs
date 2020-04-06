@@ -4,6 +4,7 @@ module Run
   ) where
 
 import Graphics.Gloss.Interface.Pure.Game
+import Graphics.Gloss.Interface.IO.Game
 
 import System.Random
 import Data.List
@@ -180,4 +181,4 @@ helloStr name = Translate (-650) 220 $ Scale 0.2 0.2 $ Color yellow $ Text ("Wel
 run :: IO()
 run = do
   gen <- getStdGen
-  play  window bgColor fps (initState (fst (randomR randRange gen ))  StartScreen ) draw eventHandler tick
+  playIO window bgColor fps (initState (fst (randomR randRange gen ))  StartScreen ) draw eventHandler tick
