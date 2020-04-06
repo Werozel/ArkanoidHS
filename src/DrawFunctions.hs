@@ -30,8 +30,8 @@ getBrickColor brick@Brick{..} = newColor
                  | hitsLeft == 2 = orange
                  | hitsLeft == 1 = dark red
                  
-getGameBoys :: GameState -> Picture
-getGameBoys _ = Pictures [
+getGameBoys :: Picture
+getGameBoys = Pictures [
                             Translate 110 (-400)  $ Color (dark chartreuse) (circleSolid 22),
                             Translate 106 (-400) $ Color chartreuse (circleSolid 20),
   
