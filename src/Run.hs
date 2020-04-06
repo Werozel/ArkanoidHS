@@ -13,6 +13,7 @@ import Constants
 import Base
 import LevelGenerator
 import DrawFunctions
+import Save
 
 
 --Возвращает начальное состояние игры
@@ -37,10 +38,10 @@ initState rnd v   = GameState False v  initBallPos initBallDirection initPlatfor
 tick ::Float -> GameState -> GameState
 tick _ state@GameState{..} | view /= LevelView = state
                            | result == Win =
-                              GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
+                                  GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
                            | result == Lose =
                               GameState False LevelView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
-                           |view /= LevelView = state
+                           | view /= LevelView = state
                            | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
                             where
                               newBallPos = moveBall ballPos ballDirection
@@ -56,15 +57,17 @@ tick _ state@GameState{..} | view /= LevelView = state
                                         | checkFall newBallPos state = Lose
                                         | otherwise = NotFinished
                               newPlatformPos = checkAndMovePlatform state
+                              saveCheck = saveResult state
 
 
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> Picture
 draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr,tutorialTextW, tutorialTextContinue]
                     | view == Menu = Scale 0.45 0.45 $ Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon]
-                    | result == Win = Pictures [winText, menuSpace, menuSpace2, winText2,gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2,nameBoy,nameBoy2,nameBoy3]
-                    | result == Lose = Pictures [loseText, menuSpace, menuSpace2, loseText2,gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, nameBoy,nameBoy2,nameBoy3]
+                    | result == Win = Pictures [winText, menuSpace, menuSpace2, winText2, gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2,nameBoy,nameBoy2,nameBoy3]
+                    | result == Lose = Pictures [loseText, menuSpace, menuSpace2, loseText2, gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, nameBoy,nameBoy2,nameBoy3]
                     | view == Pause = Pictures [paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3]
+                    | view == ResultsMenu = Pictures[]
                     | otherwise = Pictures [ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3]
                       where
                         paused = Scale 0.35 0.35 $ Translate (-windowWidthFloat * 0.67) 0 $ Color yellow $ Text "PAUSED"
@@ -77,40 +80,7 @@ draw GameState {..} | view == StartScreen = Scale 0.33 0.35 $ Pictures [helloStr
 
 
                         gameboy = Color azure gameboys
-                        gameboys = Pictures [
-                          Translate 110 (-400)  $ Color (dark chartreuse) (circleSolid 22),
-                          Translate 106 (-400) $ Color chartreuse (circleSolid 20),
-
-
-                          Translate 110 (-340) $ Color (dark yellow)(circleSolid 22),
-                          Translate 106 (-340) $ Color yellow (circleSolid 20),
-
-                         Translate 66 (-370) $ Color (dark azure) (circleSolid 22),
-                         Translate 62 (-370) $ Color azure (circleSolid 20),
-
-                          Translate 156 (-370) $ Color (dark red) (circleSolid 22),
-                          Translate 152 (-370) $ Color red (circleSolid 20),
-
-                          Translate (-127) (-368) $ Color azure (rectangleSolid 40 100),
-                          Translate (-127) (-368) $ Color azure (rectangleSolid 100 40),
-                          Translate (-130) (-370) $ Color (dark cyan) (rectangleSolid 35 90),
-                          Translate (-130) (-370) $ Color (dark cyan) (rectangleSolid 90 35),
-
-                          Rotate (-30) $ Translate (17) 401 (rectangleSolid windowWidthScore wallsWidth),
-                          Rotate (-30) $ Translate (404) 174 (rectangleSolid windowWidthScore wallsWidth),
-                          Rotate (-30) $ Translate 21 (-500) (rectangleSolid windowWidthScore wallsWidth),
-                          Translate 18 328 (rectangleSolid windowWidthFloat wallsWidth), -- вверх 1 слой
-                          Translate (-30) 328 (rectangleSolid windowWidthFloat wallsWidth), -- вверх 1 слой
-                          Translate 225 29 (rectangleSolid wallsWidth windowHeightFloat),  -- бок 1 слой
-                          Translate 225 (-150) (rectangleSolid wallsWidth windowHeightFloat), -- бок слой 1 слой
-                          Translate 27 (-448) (rectangleSolid windowWidthFloat wallsWidth), -- низ 1 слой
-                          Translate (-28) (-448) (rectangleSolid windowWidthFloat wallsWidth), -- низ 1 слой
-                          Translate (-225) 29 (rectangleSolid wallsWidth windowHeightFloat),  -- бок 1 слой
-                          Translate (-225) (-150) (rectangleSolid wallsWidth windowHeightFloat),
-                          Translate 107 378 (rectangleSolid windowWidthFloat wallsWidth), -- вверх 2 слой
-                          Translate 50 378 (rectangleSolid windowWidthFloat wallsWidth),
-                          Translate 309 80 (rectangleSolid wallsWidth windowHeightFloat),  -- бок 2 слой
-                          Translate 309 (-97) (rectangleSolid wallsWidth windowHeightFloat)]
+                        gameboys = getGameBoys
 
                         helloStr = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ Text "Hello"
 
