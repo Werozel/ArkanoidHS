@@ -89,11 +89,11 @@ getResultText path = do
                           res <- readFile path
                           if null res
                           then
-                            return "No results yet!"
+                            return ""
                           else
                             return $ formatResult res
                        else
-                          return "No results yet!"
+                          return ""
 
 translateAllY :: Float -> [Picture] -> [Picture]
 translateAllY _ [] = []
@@ -123,7 +123,7 @@ draw state@GameState {..} = do
                            WinView -> return (Pictures [playTimePic, playerName, winText, menuSpace, menuSpace2, winText2, gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
                            LoseView -> return (Pictures [playTimePic, playerName, loseText, menuSpace, menuSpace2, loseText2, gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
                            Pause -> return (Pictures [playTimePic, playerName, paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
-                           ResultsMenu -> return (Pictures[resultTitle, resultBorders, resultTextPic])
+                           ResultsMenu -> return (Pictures[resultTitle, resultBorders, resultTextPic, resultMenuHint, resultMenuHint2])
                            LevelView -> return (Pictures [playTimePic, playerName, ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
                            _ -> return (Pictures [ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
                       where
@@ -134,7 +134,12 @@ draw state@GameState {..} = do
                         resultBorderTop = Translate 0 (540 - 120) $ Line [(-960 + 100, 0), (960 - 100, 0)]
                         resultBorderBottom = Translate 0 (-540 + 80) $ Line [(-960 + 100, 0), (960 - 100, 0)]
 
+                        resultMenuHint = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) (4 * (windowHeightFloat - 150)) $ Color yellow $ Text " Press 'M' - to enter MENU "
+                        resultMenuHint2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (4 * (windowHeightFloat - 150)) $ Color yellow $ Text " Press 'M' - to enter MENU "
+
                         playerName = Scale 0.55 0.55 $ Translate (windowWidthFloat * 2.72) 100 $ Color white $ Text name
+
+
 
                         paused = Scale 0.35 0.35 $ Translate (-windowWidthFloat * 0.67) 0 $ Color yellow $ Text "PAUSED"
                         paused2 = Scale 0.35 0.35 $  Translate (-windowWidthFloat * 0.66) 0 $ Color yellow $ Text "PAUSED"
