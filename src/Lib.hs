@@ -31,7 +31,7 @@ data BricksGrid = BricksGrid {
 -- Result of a game
 data Result = Win | Lose | NoTime | NotFinished deriving Eq
 -- Текущее меню или уровень
-data View = MainMenu | ResultsMenu | SettingsMenu | LevelView | StartScreen | Pause | Menu deriving Eq
+data View = MainMenu | ResultsMenu | SettingsMenu | LevelView | StartScreen | Pause | Menu | WinView | LoseView deriving Eq
 
 data KeyPressed = LeftPressed | RightPressed | NonePressed deriving Eq
 type KeysPressed = [KeyPressed]
@@ -39,6 +39,9 @@ type KeysPressed = [KeyPressed]
 -- Структура данных о состоянии игры
 -- Point = (Float, Float)
 data GameState = GameState {
+  name :: String,   -- имя текущего игрока
+  startTime :: UTCTime,  -- время старта уровня
+  isSaved :: Bool, -- флаг указываеющий был ли сохранен текущий результат
   isPlaying :: Bool, --  флаг указывает на то, что игра находится в процессе ожидания запуска
   view :: View, -- указывает, в каком состоянии находится окно
   ballPos :: Point, -- текущее положение шара
