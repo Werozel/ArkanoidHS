@@ -8,6 +8,8 @@ import Graphics.Gloss.Interface.IO.Game
 import System.Random
 import Data.List
 import Data.Time.Clock
+import System.IO
+import System.Directory
 
 import Lib
 import Constants
@@ -16,6 +18,7 @@ import LevelGenerator
 import DrawFunctions
 import Save
 import Data.Fixed
+import Data.String (String)
 
 
 --Возвращает начальное состояние игры
@@ -65,6 +68,40 @@ formatTime :: String -> String
 formatTime (x:xs) | x == '.' = x:head xs:"s"
                   | otherwise = x:formatTime xs
 
+formatResult :: String -> String
+formatResult [] = ""
+formatResult ('.':c:xs) = '.':c:formatResult (drop 11 xs)
+formatResult (x:xs) = x:formatResult xs
+
+splitResults :: String -> [String]
+splitResults s = splitResults2 s ""
+
+splitResults2 :: String -> String -> [String]
+splitResults2 [] acc = [acc]
+splitResults2 (x:xs) acc | x == 's' = (acc++[x]):splitResults2 xs ""
+                         | otherwise = splitResults2 xs (acc++[x])
+
+getResultText :: String -> IO String
+getResultText path = do
+                       fileExists <- doesFileExist path
+                       if fileExists
+                       then do
+                          res <- readFile path
+                          if null res
+                          then
+                            return "No results yet!"
+                          else
+                            return $ formatResult res
+                       else
+                          return "No results yet!"
+
+translateAllY :: Float -> [Picture] -> [Picture]
+translateAllY _ [] = []
+translateAllY start (x:xs) = Translate 0 start x : translateAllY (start - 80) xs
+
+takeLast :: Int -> [a] -> [a]
+takeLast n x = drop (length x - (n + 1)) x
+
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> IO Picture
 draw state@GameState {..} = do
@@ -72,16 +109,31 @@ draw state@GameState {..} = do
                           let
                             playTimeText = formatTime (show (nominalDiffTimeToSeconds playTime))
                             playTimePic = Scale 0.35 0.35 $ Translate (windowWidthFloat * 4.5) (-100) $ Color yellow $ Text playTimeText
+
+                          resultText <- getResultText resultsFilePath
+                          let results = drop 1 $ reverse $ takeLast 30 $ splitResults resultText
+                              resultPics = map (Scale 0.5 0.5 . Color white . Text) results
+                              resultPics10 = Translate (-960 + 130) 0 $ Pictures $ translateAllY (540 - 200) $ take 10 resultPics
+                              resultPics20 = Translate (-250) 0 $ Pictures $ translateAllY (540 - 200) $ take 10 $ drop 10 resultPics
+                              resultPics30 = Translate (960 - 500) 0 $ Pictures $ translateAllY (540 - 200) $ take 10 $ drop 20 resultPics
+                              resultTextPic = Pictures [resultPics10, resultPics20, resultPics30]
                           case view of
                            StartScreen -> return (Pictures [ helloStrPic, tutorialTextW, tutorialTextContinue])
-                           Menu -> return (Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon])
-                           WinView -> return (Pictures [playTimePic, playerName, winText, menuSpace, menuSpace2, winText2, gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2,nameBoy,nameBoy2,nameBoy3])
-                           LoseView -> return (Pictures [playTimePic, playerName, loseText, menuSpace, menuSpace2, loseText2, gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, nameBoy,nameBoy2,nameBoy3])
-                           Pause -> return (Pictures [playTimePic, playerName, paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3])
-                           ResultsMenu -> return (Pictures[])
-                           LevelView -> return (Pictures [playTimePic, playerName, ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3])
-                           _ -> return (Pictures [ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3])
+                           Menu -> return (Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextResults, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon])
+                           WinView -> return (Pictures [playTimePic, playerName, winText, menuSpace, menuSpace2, winText2, gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
+                           LoseView -> return (Pictures [playTimePic, playerName, loseText, menuSpace, menuSpace2, loseText2, gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
+                           Pause -> return (Pictures [playTimePic, playerName, paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
+                           ResultsMenu -> return (Pictures[resultTitle, resultBorders, resultTextPic])
+                           LevelView -> return (Pictures [playTimePic, playerName, ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
+                           _ -> return (Pictures [ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
                       where
+                        resultTitle = Translate (-150) (windowHeightFloat - 150) $ Scale 0.8 0.8 $ Color white $ Text "Results"
+                        resultBorders = Color yellow $ Pictures [resultBorderLeft, resultBorderRight, resultBorderTop, resultBorderBottom]
+                        resultBorderLeft = Translate (-960 + 100) 0 $ Line [(0, 540 - 120), (0, -540 + 80)]
+                        resultBorderRight = Translate (960 - 100) 0 $ Line [(0, 540 - 120), (0, -540 + 80)]
+                        resultBorderTop = Translate 0 (540 - 120) $ Line [(-960 + 100, 0), (960 - 100, 0)]
+                        resultBorderBottom = Translate 0 (-540 + 80) $ Line [(-960 + 100, 0), (960 - 100, 0)]
+
                         playerName = Scale 0.55 0.55 $ Translate (windowWidthFloat * 2.72) 100 $ Color white $ Text name
 
                         paused = Scale 0.35 0.35 $ Translate (-windowWidthFloat * 0.67) 0 $ Color yellow $ Text "PAUSED"
@@ -137,26 +189,30 @@ draw state@GameState {..} = do
 
                         menu = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) 150 $ Color yellow $ Text "| Press 'M' - to enter MENU "
                         menu2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) 150 $ Color yellow $ Text "| Press 'M' - to enter MENU "
-                        menuPaused = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) 0 $ Color yellow $ Text "| Press 'F' - to Paused     "
-                        menuPausd2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) 0 $ Color yellow $ Text "| Press 'F' - to Paused  "
+                        menuPaused = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) 0 $ Color yellow $ Text "| Press 'F' - to Pause     "
+                        menuPausd2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) 0 $ Color yellow $ Text "| Press 'F' - to Pause  "
                         menuRestart = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) (-150) $ Color yellow $ Text "| Press 'R' - to Restart     "
                         menuRestart2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (-150) $ Color yellow $ Text "| Press 'R' - to Restart  "
                         menuExit = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) (-300) $ Color yellow $ Text "| Press 'Esc' - to exit Game  "
                         menuExit2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (-300) $ Color yellow $ Text "| Press 'Esc' - to exit Game  "
-                        menuSpace = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) (-450) $ Color yellow $ Text "| Press 'Space' - to play Game  "
-                        menuSpace2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (-450) $ Color yellow $ Text "| Press 'Space' - to play Game  "
+                        menuSpace = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) (-450) $ Color yellow $ Text "| Press 'Space' - to Continue  "
+                        menuSpace2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (-450) $ Color yellow $ Text "| Press 'Space' - to Continue  "
+                        menuResults = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) (-600) $ Color yellow $ Text "| Press 'V' - for Results  "
+                        menuResults2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (-600) $ Color yellow $ Text "| Press 'V' - for Results   "
 
                         menuText =  Scale 0.45 0.45 $ Translate (-windowWidthFloat * 1.7) 370 $ Color yellow $ Text "Menu"
                         menuText2 =  Scale 0.45 0.45 $ Translate (-windowWidthFloat * 1.69) 370 $ Color yellow $ Text "Menu"
-                        menuTextBonus =  Scale 0.45 0.45 $ Translate (-windowWidthFloat * 1.7) (-370) $ Color yellow $ Text "Bonus"
-                        menuTextBonus2 =  Scale 0.45 0.45 $ Translate (-windowWidthFloat * 1.69) (-370) $ Color yellow $ Text "Bonus"
+                        menuTextBonus =  Scale 0.45 0.45 $ Translate (-windowWidthFloat * 1.7) (-430) $ Color yellow $ Text "Bonus"
+                        menuTextBonus2 =  Scale 0.45 0.45 $ Translate (-windowWidthFloat * 1.69) (-430) $ Color yellow $ Text "Bonus"
 
-                        menuTextControl = Scale 0.45 0.45 $ Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 300 $ Color white $ Text "- control arrow  <- | ->"
-                        menuTextRestrat = Scale 0.45 0.45 $ Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 150 $ Color white $ Text "- 'R' restart game"
-                        menuTextPaused = Scale 0.45 0.45 $ Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 0 $ Color white $ Text "- 'F' paused game"
+                        menuTextControl = Scale 0.45 0.45 $ Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 300 $ Color white $ Text "- control with arrows  <- | ->"
+                        menuTextRestrat = Scale 0.45 0.45 $ Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 150 $ Color white $ Text "- 'R' restarts the game"
+                        menuTextPaused = Scale 0.45 0.45 $ Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) 0 $ Color white $ Text "- 'F' pauses the game"
                         menuTextEsc = Scale 0.45 0.45 $ Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) (-150) $ Color white $ Text "- 'Esc' to exit game "
                         menuTextContine = Scale 0.45 0.45 $ Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) (-300) $ Color white $ Text "- Press 'Space' to play"
-                        menuTextBon = Scale 0.45 0.45 $ Scale 0.65 0.70 $  Translate (-windowWidthFloat * 1.6) (-750) $ Color white $ Text "Hitting a corner of a brick - one shot it"
+                        menuTextResults = Scale 0.45 0.45 $ Scale 0.70 0.70 $ Translate (-windowWidthFloat * 1.6) (-450) $ Color white $ Text "- Press 'V' for results"
+
+                        menuTextBon = Scale 0.45 0.45 $ Scale 0.65 0.70 $  Translate (-windowWidthFloat * 1.6) (-850) $ Color white $ Text "Hitting a corner of a brick - one shot it"
 
                         tutorialTextW = Scale 0.33 0.35 $ Translate (-windowWidthFloat * 2.5) 110 $ Color white $ Text "Welcome to the game ARKANOID!"
                         tutorialTextContinue = Scale 0.33 0.35 $ Translate (-windowWidthFloat * 1.5) (-100) $ Color white $ Text "Press 'Enter' to play"
@@ -219,6 +275,7 @@ eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
   | c == 'm' = return state { view = Menu}
   | c == 'f' = return state { view = Pause}
   | c == 'r' = initState name 25 LevelView    -- Handles restart button
+  | c == 'v' = return state { view = ResultsMenu}
   | otherwise = return state
 eventHandler _ state = return state
 

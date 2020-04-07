@@ -12,7 +12,8 @@ saveResult :: GameState -> IO()
 saveResult state@GameState {..} = if not isSaved 
                                   then 
                                     do
-                                      let fpath = "saves/results.txt"
+                                      createDirectoryIfMissing False "saves"
+                                      let fpath = resultsFilePath
                                       appendFile fpath (name ++ " " ++ (show playTime) ++ "\n")
                                       putStrLn "Saved"
                                   else

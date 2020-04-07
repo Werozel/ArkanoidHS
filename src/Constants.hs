@@ -6,6 +6,10 @@ import Graphics.Gloss.Interface.Pure.Game
 fps :: Int
 fps = 120
 
+-- Путь к сохранениям
+resultsFilePath :: String
+resultsFilePath = "saves/results.txt"
+
 -- Global constant
 secondsInMinute :: Int
 secondsInMinute = 60
