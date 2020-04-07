@@ -10,7 +10,7 @@ formatTime (x:xs) | x == '.' = x:head xs:"s"
 
 formatResult :: String -> String
 formatResult [] = ""
-formatResult ('.':c:xs) = '.':c:formatResult (drop 11 xs)
+formatResult ('.':c:xs) = '.':c:formatResult (dropWhile (/='s') xs)
 formatResult (x:xs) = x:formatResult xs
 
 splitResults :: String -> [String]
@@ -40,4 +40,4 @@ translateAllY _ [] = []
 translateAllY start (x:xs) = Translate 0 start x : translateAllY (start - 80) xs
 
 takeLast :: Int -> [a] -> [a]
-takeLast n x = drop (length x - (n + 1)) x
+takeLast n x = drop (length x - n) x
