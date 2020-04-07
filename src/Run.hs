@@ -15,13 +15,12 @@ import Base
 import LevelGenerator
 import DrawFunctions
 import Save
+import Data.Fixed
 
 
 --Возвращает начальное состояние игры
 initState :: String -> Float -> View ->  IO GameState
-initState name rnd v = do
-        now <- getCurrentTime
-        return $ GameState name now False False v initBallPos initBallDirection initPlatformPos 0 initGrid 3  NotFinished [NonePressed]
+initState name rnd v = return $ GameState name False (secondsToNominalDiffTime 0) False v initBallPos initBallDirection initPlatformPos 0 initGrid 3  NotFinished [NonePressed]
   where
     initBallPos :: Point
     initBallPos = (0, initBallPositionY)
@@ -39,13 +38,13 @@ initState name rnd v = do
 
 -- Изменяет состояние игры с каждым тиком
 tick ::Float -> GameState -> IO GameState
-tick _ state@GameState{..} | view /= LevelView = return state
-                           | result == Win = do
-                                  saveResult state
-                                  return $ GameState name startTime True False WinView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
-                           | result == Lose =
-                              return $ GameState name startTime isSaved False LoseView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
-                           | otherwise = return $ GameState name startTime isSaved isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
+tick s state@GameState{..} | view /= LevelView = return state
+                           | result == Win =
+                                  return $ GameState name True playTime False WinView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
+                           | result == Lose = do
+                              saveResult state
+                              return $ GameState name isSaved playTime False LoseView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
+                           | otherwise = return $ GameState name isSaved (playTime + secondsToNominalDiffTime (realToFrac s)) isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
                             where
                               newBallPos = moveBall ballPos ballDirection
                               newGrid = detectHit newBallPos (bricks grid)
@@ -62,19 +61,28 @@ tick _ state@GameState{..} | view /= LevelView = return state
                               newPlatformPos = checkAndMovePlatform state
                               saveCheck = saveResult state
 
+formatTime :: String -> String
+formatTime (x:xs) | x == '.' = x:head xs:"s"
+                  | otherwise = x:formatTime xs
+
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> IO Picture
-draw state@GameState {..} = case view of
+draw state@GameState {..} = do
+                          currTime <- getCurrentTime
+                          let
+                            playTimeText = formatTime (show (nominalDiffTimeToSeconds playTime))
+                            playTimePic = Scale 0.35 0.35 $ Translate (windowWidthFloat * 4.5) (-100) $ Color yellow $ Text playTimeText
+                          case view of
                            StartScreen -> return (Pictures [ helloStrPic, tutorialTextW, tutorialTextContinue])
                            Menu -> return (Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon])
-                           WinView -> return (Pictures [playerName, winText, menuSpace, menuSpace2, winText2, gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2,nameBoy,nameBoy2,nameBoy3])
-                           LoseView -> return (Pictures [playerName, loseText, menuSpace, menuSpace2, loseText2, gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, nameBoy,nameBoy2,nameBoy3])
-                           Pause -> return (Pictures [playerName, paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3])
+                           WinView -> return (Pictures [playTimePic, playerName, winText, menuSpace, menuSpace2, winText2, gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2,nameBoy,nameBoy2,nameBoy3])
+                           LoseView -> return (Pictures [playTimePic, playerName, loseText, menuSpace, menuSpace2, loseText2, gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, nameBoy,nameBoy2,nameBoy3])
+                           Pause -> return (Pictures [playTimePic, playerName, paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3])
                            ResultsMenu -> return (Pictures[])
-                           LevelView -> return (Pictures [playerName, ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3])
+                           LevelView -> return (Pictures [playTimePic, playerName, ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3])
                            _ -> return (Pictures [ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,nameBoy,nameBoy2,nameBoy3])
                       where
-                        playerName = Scale 0.35 0.35 $ Translate (windowWidthFloat * 4.5) 150 $ Color white $ Text name
+                        playerName = Scale 0.55 0.55 $ Translate (windowWidthFloat * 2.72) 100 $ Color white $ Text name
 
                         paused = Scale 0.35 0.35 $ Translate (-windowWidthFloat * 0.67) 0 $ Color yellow $ Text "PAUSED"
                         paused2 = Scale 0.35 0.35 $  Translate (-windowWidthFloat * 0.66) 0 $ Color yellow $ Text "PAUSED"

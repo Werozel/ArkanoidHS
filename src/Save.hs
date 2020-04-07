@@ -6,15 +6,14 @@ import Constants
 
 import Data.Time.Clock
 import System.IO
+import System.Directory
 
 saveResult :: GameState -> IO()
 saveResult state@GameState {..} = if not isSaved 
                                   then 
                                     do
-                                      endTime <- getCurrentTime
                                       let fpath = "saves/results.txt"
-                                      appendFile fpath (name ++ " " ++ (show (diffUTCTime endTime startTime)) ++ "\n")
+                                      appendFile fpath (name ++ " " ++ (show playTime) ++ "\n")
                                       putStrLn "Saved"
                                   else
                                     return ()
-
