@@ -1,4 +1,5 @@
 .stack-work/
+saves/*
 *~
 .idea/
 out/*

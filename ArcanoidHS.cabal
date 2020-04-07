@@ -35,6 +35,7 @@ library
       LevelGenerator
       DrawFunctions
       Save
+      ResultService
   other-modules:
       Paths_ArcanoidHS
   hs-source-dirs:
@@ -44,6 +45,8 @@ library
       gloss,
       time,
       random,
+      fixed,
+      directory,
       extra
   default-language: Haskell2010
 

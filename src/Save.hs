@@ -4,5 +4,16 @@ module Save where
 import Lib
 import Constants
 
-saveResult :: GameState -> Bool
-saveResult _ = True
+import Data.Time.Clock
+import System.IO
+import System.Directory
+
+saveResult :: GameState -> IO()
+saveResult state@GameState {..} = if not isSaved 
+                                  then 
+                                    do
+                                      createDirectoryIfMissing False "saves"
+                                      let fpath = resultsFilePath
+                                      appendFile fpath (name ++ " " ++ (show playTime) ++ "\n")
+                                  else
+                                    return ()
