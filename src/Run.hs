@@ -18,7 +18,7 @@ import LevelGenerator
 import DrawFunctions
 import Save
 import Data.Fixed
-import Data.String (String)
+import ResultService
 
 
 --Возвращает начальное состояние игры
@@ -42,11 +42,10 @@ initState name rnd v = return $ GameState name False (secondsToNominalDiffTime 0
 -- Изменяет состояние игры с каждым тиком
 tick ::Float -> GameState -> IO GameState
 tick s state@GameState{..} | view /= LevelView = return state
-                           | result == Win =
+                           | result == Win = do
+                                  saveResult state
                                   return $ GameState name True playTime False WinView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
-                           | result == Lose = do
-                              saveResult state
-                              return $ GameState name isSaved playTime False LoseView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
+                           | result == Lose = return $ GameState name isSaved playTime False LoseView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
                            | otherwise = return $ GameState name isSaved (playTime + secondsToNominalDiffTime (realToFrac s)) isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
                             where
                               newBallPos = moveBall ballPos ballDirection
@@ -64,43 +63,7 @@ tick s state@GameState{..} | view /= LevelView = return state
                               newPlatformPos = checkAndMovePlatform state
                               saveCheck = saveResult state
 
-formatTime :: String -> String
-formatTime (x:xs) | x == '.' = x:head xs:"s"
-                  | otherwise = x:formatTime xs
 
-formatResult :: String -> String
-formatResult [] = ""
-formatResult ('.':c:xs) = '.':c:formatResult (drop 11 xs)
-formatResult (x:xs) = x:formatResult xs
-
-splitResults :: String -> [String]
-splitResults s = splitResults2 s ""
-
-splitResults2 :: String -> String -> [String]
-splitResults2 [] acc = [acc]
-splitResults2 (x:xs) acc | x == 's' = (acc++[x]):splitResults2 xs ""
-                         | otherwise = splitResults2 xs (acc++[x])
-
-getResultText :: String -> IO String
-getResultText path = do
-                       fileExists <- doesFileExist path
-                       if fileExists
-                       then do
-                          res <- readFile path
-                          if null res
-                          then
-                            return ""
-                          else
-                            return $ formatResult res
-                       else
-                          return ""
-
-translateAllY :: Float -> [Picture] -> [Picture]
-translateAllY _ [] = []
-translateAllY start (x:xs) = Translate 0 start x : translateAllY (start - 80) xs
-
-takeLast :: Int -> [a] -> [a]
-takeLast n x = drop (length x - (n + 1)) x
 
 -- Рисует картинку в окне для текущего состояния игры
 draw :: GameState -> IO Picture
