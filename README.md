@@ -3,17 +3,7 @@
 A simple haskell arcanoid game
 
 ## Requirements
-gloss
-
-time
-
-fixed
-
-directory
-
-random
-
-extra
+gloss, time, fixed, directory, random, extra
 
 ## Installation
 ``stack install``
