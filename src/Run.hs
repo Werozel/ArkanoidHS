@@ -14,6 +14,7 @@ import Base
 import LevelGenerator
 import DrawFunctions
 import Design
+import Save
 
 
 --Возвращает начальное состояние игры
@@ -38,10 +39,10 @@ initState rnd v   = GameState False v  initBallPos initBallDirection initPlatfor
 tick ::Float -> GameState -> GameState
 tick _ state@GameState{..} | view /= LevelView = state
                            | result == Win =
-                              GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
+                                  GameState False LevelView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
                            | result == Lose =
                               GameState False LevelView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
-                           |view /= LevelView = state
+                           | view /= LevelView = state
                            | otherwise = GameState isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
                             where
                               newBallPos = moveBall ballPos ballDirection
@@ -57,6 +58,8 @@ tick _ state@GameState{..} | view /= LevelView = state
                                         | checkFall newBallPos state = Lose
                                         | otherwise = NotFinished
                               newPlatformPos = checkAndMovePlatform state
+                              saveCheck = saveResult state
+
 
 -- Обрабатывает входящие события
 eventHandler :: Event -> GameState -> GameState

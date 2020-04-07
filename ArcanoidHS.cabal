@@ -34,6 +34,7 @@ library
       Base
       LevelGenerator
       DrawFunctions
+      Save
   other-modules:
       Paths_ArcanoidHS
   hs-source-dirs:
