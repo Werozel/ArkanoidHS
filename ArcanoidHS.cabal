@@ -28,7 +28,6 @@ source-repository head
 library
   exposed-modules:
       Lib
-      Design
       Run
       Constants
       Base

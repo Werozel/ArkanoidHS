@@ -16,7 +16,6 @@ import Constants
 import Base
 import LevelGenerator
 import DrawFunctions
-import Design
 import Save
 import Data.Fixed
 import ResultService
@@ -81,7 +80,7 @@ draw state@GameState {..} = do
                               resultPics30 = Translate (960 - 500) 0 $ Pictures $ translateAllY (540 - 200) $ take 10 $ drop 20 resultPics
                               resultTextPic = Pictures [resultPics10, resultPics20, resultPics30]
                           case view of
-                           StartScreen -> return (Pictures [ helloStrPic, tutorialTextW, tutorialTextContinue])
+                           StartScreen -> return (Pictures [tutorialTextW, tutorialTextContinue])
                            Menu -> return (Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextResults, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon])
                            WinView -> return (Pictures [playTimePic, playerName, winText, menuSpace, menuSpace2, winText2, gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
                            LoseView -> return (Pictures [playTimePic, playerName, loseText, menuSpace, menuSpace2, loseText2, gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
@@ -145,8 +144,6 @@ draw state@GameState {..} = do
                                                Translate 50 378 (rectangleSolid windowWidthFloat wallsWidth),
                                                Translate 309 80 (rectangleSolid wallsWidth windowHeightFloat),  -- бок 2 слой
                                                Translate 309 (-97) (rectangleSolid wallsWidth windowHeightFloat)]
-
-                        helloStrPic = Translate (-windowWidthFloat * 2.8) 350 $ Color yellow $ helloStr name
 
                         nameGame = Translate (-windowWidthFloat * 2.3 ) 370 $ Color azure $ Text "ARKANOID"
                         nameGame2 = Translate (-windowWidthFloat * 2.28 ) 374 $ Color magenta $ Text "ARKANOID"
