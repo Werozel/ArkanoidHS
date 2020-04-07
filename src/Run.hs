@@ -16,6 +16,7 @@ import Constants
 import Base
 import LevelGenerator
 import DrawFunctions
+import Design
 import Save
 import Data.Fixed
 import ResultService
@@ -62,7 +63,6 @@ tick s state@GameState{..} | view /= LevelView = return state
                                         | otherwise = NotFinished
                               newPlatformPos = checkAndMovePlatform state
                               saveCheck = saveResult state
-
 
 
 -- Рисует картинку в окне для текущего состояния игры
@@ -248,8 +248,6 @@ eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
 eventHandler _ state = return state
 
 
-helloStr :: String -> Picture
-helloStr name = Translate (-650) 220 $ Scale 0.2 0.2 $ Color yellow $ Text ("Welcome " ++ name ++ " !")
 
 
 getName :: IO String

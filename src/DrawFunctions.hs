@@ -29,3 +29,4 @@ getBrickColor brick@Brick{..} = newColor
   where newColor | hitsLeft == 3 = yellow
                  | hitsLeft == 2 = orange
                  | hitsLeft == 1 = dark red
+        

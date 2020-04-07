@@ -63,7 +63,7 @@ bgColor = black
 
 -- Окно для игры
 window :: Display
-window = FullScreen
+window = InWindow "ARKANOID" (1600, 900) (100, 100)
 
 -- Преобразует Hit на строку для функции Show
 showHit :: Hit -> String
