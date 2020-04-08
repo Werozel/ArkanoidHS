@@ -1,4 +1,5 @@
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE BlockArguments #-}
 module Run
   ( run, tick, initState
   ) where
@@ -10,6 +11,7 @@ import Data.List
 import Data.Time.Clock
 import System.IO
 import System.Directory
+import System.Exit
 
 import Lib
 import Constants
@@ -41,7 +43,10 @@ initState name rnd v = return $ GameState name False (secondsToNominalDiffTime 0
 
 -- Изменяет состояние игры с каждым тиком
 tick ::Float -> GameState -> IO GameState
-tick s state@GameState{..} | view /= LevelView = return state
+tick s state@GameState{..} | view == Exit = do 
+                                      exitSuccess
+                                      return state
+                           | view /= LevelView = return state
                            | result == Win = do
                                   saveResult state
                                   return $ GameState name True playTime False WinView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
@@ -235,6 +240,8 @@ eventHandler (EventKey (SpecialKey key) keyState _ _) state@GameState {..}
                then RightPressed : keysPressed
                else delete RightPressed keysPressed
          })
+  | key == KeyEsc = 
+    return (state { view = Exit})
   | otherwise = return state
 eventHandler (EventKey (Char c) Down _ _ ) state@GameState{..}
   | c == 'm' = return state { view = Menu}
