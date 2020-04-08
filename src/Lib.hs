@@ -3,6 +3,7 @@ module Lib where
 import Graphics.Gloss.Interface.Pure.Game
 
 import Data.Time.Clock
+import Data.Fixed
 
 import System.Random
 
@@ -42,6 +43,7 @@ data GameState = GameState {
   name :: String,   -- имя текущего игрока
   isSaved :: Bool, -- флаг указываеющий был ли сохранен текущий результат
   playTime :: NominalDiffTime,  -- время, которое длится текущий уровень
+  personalBest :: Pico,  -- персональный рекорд
   isPlaying :: Bool, --  флаг указывает на то, что игра находится в процессе ожидания запуска
   view :: View, -- указывает, в каком состоянии находится окно
   ballPos :: Point, -- текущее положение шара
