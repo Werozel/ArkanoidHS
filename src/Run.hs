@@ -25,7 +25,9 @@ import ResultService
 
 --Возвращает начальное состояние игры
 initState :: String -> Float -> View ->  IO GameState
-initState name rnd v = return $ GameState name False (secondsToNominalDiffTime 0) False v initBallPos initBallDirection initPlatformPos 0 initGrid 3  NotFinished [NonePressed]
+initState name rnd v = do
+    pb <- getPersonalBest name
+    return $ GameState name False (secondsToNominalDiffTime 0) pb False v initBallPos initBallDirection initPlatformPos 0 initGrid 3  NotFinished [NonePressed]
   where
     initBallPos :: Point
     initBallPos = (0, initBallPositionY)
@@ -43,15 +45,16 @@ initState name rnd v = return $ GameState name False (secondsToNominalDiffTime 0
 
 -- Изменяет состояние игры с каждым тиком
 tick ::Float -> GameState -> IO GameState
-tick s state@GameState{..} | view == Exit = do 
+tick s state@GameState{..} | view == Exit = do
                                       exitSuccess
                                       return state
                            | view /= LevelView = return state
                            | result == Win = do
                                   saveResult state
-                                  return $ GameState name True playTime False WinView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
-                           | result == Lose = return $ GameState name isSaved playTime False LoseView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
-                           | otherwise = return $ GameState name isSaved (playTime + secondsToNominalDiffTime (realToFrac s)) isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
+                                  let pb = if personalBest == 0 then nominalDiffTimeToSeconds playTime else min personalBest (nominalDiffTimeToSeconds playTime)
+                                  return $ GameState name True playTime pb False WinView ballPos (0, 0) platformPos level grid 0 Win [NonePressed]
+                           | result == Lose = return $ GameState name isSaved playTime personalBest False LoseView ballPos (0, 0) platformPos level grid 0 Lose [NonePressed]
+                           | otherwise = return $ GameState name isSaved (playTime + secondsToNominalDiffTime (realToFrac s)) personalBest isPlaying view newBallPos newBallDirection newPlatformPos level newGrid bricksLeftUpdated newResult keysPressed
                             where
                               newBallPos = moveBall ballPos ballDirection
                               newGrid = detectHit newBallPos (bricks grid)
@@ -75,7 +78,7 @@ draw state@GameState {..} = do
                           currTime <- getCurrentTime
                           let
                             playTimeText = formatTime (show (nominalDiffTimeToSeconds playTime))
-                            playTimePic = Scale 0.35 0.35 $ Translate (windowWidthFloat * 4.5) (-100) $ Color yellow $ Text playTimeText
+                            playTimePic = Scale 0.35 0.35 $ Translate (windowWidthFloat * 4) (-100) $ Color yellow $ Text playTimeText
 
                           resultText <- getResultText resultsFilePath
                           let results = drop 1 $ reverse $ takeLast 30 $ splitResults resultText
@@ -84,16 +87,27 @@ draw state@GameState {..} = do
                               resultPics20 = Translate (-250) 0 $ Pictures $ translateAllY (540 - 200) $ take 10 $ drop 10 resultPics
                               resultPics30 = Translate (960 - 500) 0 $ Pictures $ translateAllY (540 - 200) $ take 10 $ drop 20 resultPics
                               resultTextPic = Pictures [resultPics10, resultPics20, resultPics30]
+                          record <- getGlobalRecord
+                          let recordText = if record == 0 then "No record yet" else "Record: " ++ formatResult (show record) ++ "s"
+                              recordTextPic = Scale 0.35 0.35 $ Translate (windowWidthFloat * 4) (-500) $ Color yellow $ Text recordText
+
+                              currPlayTime = nominalDiffTimeToSeconds playTime
+                              newRecordText = if currPlayTime <= personalBest then if currPlayTime <= record then "New Record!" else "New PB!" else ""
+                              newRecordPic = Translate (- windowWidthFloat / 4 - 10) (-60) $ Scale 0.35 0.35 $ Color yellow $ Text newRecordText
+
                           case view of
                            StartScreen -> return (Pictures [tutorialTextW, tutorialTextContinue])
                            Menu -> return (Pictures [menuText,menuText2, menuTextControl, menuTextRestrat, menuTextResults, menuTextPaused,menuTextContine,menuTextEsc,menuTextBonus,menuTextBonus2,nameGame4,nameGame5,nameGame6, menuTextBon])
-                           WinView -> return (Pictures [playTimePic, playerName, winText, menuSpace, menuSpace2, winText2, gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
-                           LoseView -> return (Pictures [playTimePic, playerName, loseText, menuSpace, menuSpace2, loseText2, gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
-                           Pause -> return (Pictures [playTimePic, playerName, paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
+                           WinView -> return (Pictures [newRecordPic, recordTextPic, pbTextPic, playTimePic, playerName, winText, menuSpace, menuSpace2, winText2, gameboy, winText3, nameGame,nameGame2, nameGame3, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart ,menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
+                           LoseView -> return (Pictures [recordTextPic, pbTextPic, playTimePic, playerName, loseText, menuSpace, menuSpace2, loseText2, gameboy, loseText3, nameGame, nameGame2, nameGame3, ball, platform, wallsCollor, menu2, menu, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2, nameBoy,nameBoy2,nameBoy3])
+                           Pause -> return (Pictures [recordTextPic, pbTextPic, playTimePic, playerName, paused, menuSpace, menuSpace2, paused2, ball, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
                            ResultsMenu -> return (Pictures[resultTitle, resultBorders, resultTextPic, resultMenuHint, resultMenuHint2])
-                           LevelView -> return (Pictures [playTimePic, playerName, ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
+                           LevelView -> return (Pictures [recordTextPic, pbTextPic, playTimePic, playerName, ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2, menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
                            _ -> return (Pictures [ball,menuSpace, menuSpace2, gameboy,nameGame, nameGame2, nameGame3, bricks, platform, wallsCollor, menu, menu2, menuPaused, menuPausd2 , menuExit, menuExit2, menuRestart, menuRestart2,menuResults, menuResults2,nameBoy,nameBoy2,nameBoy3])
                       where
+                        pbText = if personalBest == 0 then "No PB yet" else "PB: " ++ formatResult (show personalBest) ++ "s"
+                        pbTextPic = Scale 0.35 0.35 $ Translate (windowWidthFloat * 4) (-300) $ Color yellow $ Text pbText
+
                         resultTitle = Translate (-150) (windowHeightFloat - 150) $ Scale 0.8 0.8 $ Color white $ Text "Results"
                         resultBorders = Color yellow $ Pictures [resultBorderLeft, resultBorderRight, resultBorderTop, resultBorderBottom]
                         resultBorderLeft = Translate (-960 + 100) 0 $ Line [(0, 540 - 120), (0, -540 + 80)]
@@ -104,9 +118,7 @@ draw state@GameState {..} = do
                         resultMenuHint = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.8) (4 * (windowHeightFloat - 150)) $ Color yellow $ Text " Press 'M' - to enter MENU "
                         resultMenuHint2 = Scale 0.25 0.25 $ Translate (-windowWidthFloat * 8.809) (4 * (windowHeightFloat - 150)) $ Color yellow $ Text " Press 'M' - to enter MENU "
 
-                        playerName = Scale 0.55 0.55 $ Translate (windowWidthFloat * 2.72) 100 $ Color white $ Text name
-
-
+                        playerName = Scale 0.55 0.55 $ Translate (windowWidthFloat * 2.5) 100 $ Color white $ Text name
 
                         paused = Scale 0.35 0.35 $ Translate (-windowWidthFloat * 0.67) 0 $ Color yellow $ Text "PAUSED"
                         paused2 = Scale 0.35 0.35 $  Translate (-windowWidthFloat * 0.66) 0 $ Color yellow $ Text "PAUSED"
@@ -268,7 +280,24 @@ getName = do
 run :: IO()
 run = do
   gen <- getStdGen
-  name <- getName
+  names <- getNames
+  let profilesStr = getProfileStr 0 names
+  putStrLn "Choose a profile:"
+  putStr profilesStr
+  nameNStr <- getLine
+  let nameInt =
+        if nameN <= length names
+          then nameN
+          else 0
+        where
+          nameN = read nameNStr :: Int
+  if nameInt == 0
+    then do
+      name <- getName
+      init <- initState name (fst (randomR randRange gen)) StartScreen
+      playIO window bgColor fps init draw eventHandler tick
+    else do
+      let name = head (drop (nameInt - 1) names)
+      init <- initState name (fst (randomR randRange gen)) StartScreen
+      playIO window bgColor fps init draw eventHandler tick
 
-  init <- initState name (fst (randomR randRange gen )) StartScreen
-  playIO window bgColor fps init draw eventHandler tick
