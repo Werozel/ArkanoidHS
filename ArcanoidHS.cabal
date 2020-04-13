@@ -66,6 +66,7 @@ test-suite ArcanoidHS-test
   main-is: Spec.hs
   other-modules:
       Paths_ArcanoidHS
+      Test
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
