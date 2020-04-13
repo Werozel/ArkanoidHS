@@ -52,15 +52,6 @@ runTest test@Test {..}
       else runTest test {state = finalState, tickCount = tickCount + 1}
 
 
-
--- Функция, вызывающая время тиковых шагов
-gameTest :: GameState -> (Float -> GameState -> IO GameState) -> Int -> IO GameState
-gameTest state@GameState{..} tick 0 = return state
-gameTest state@GameState {..} tick steps = do
-  newState <- tick 0 state
-  gameTest newState tick (steps - 1)
-
-
 -- Стабильность работы (готово)
 -- Уничтожение блока
 -- Проигрыш
