@@ -24,3 +24,10 @@ gameTest state@GameState{..} tick 0 = return state
 gameTest state@GameState {..} tick steps = do
   newState <- tick 0 state
   gameTest newState tick (steps - 1)
+
+
+-- Стабильность работы (готово)
+-- Уничтожение блока
+-- Проигрыш
+-- Конец игры (выигрыш)
+-- Сохранение + загрузка
