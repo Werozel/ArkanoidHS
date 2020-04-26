@@ -29,9 +29,12 @@ main = do
 
 runAllTests :: [Test] -> IO Bool
 runAllTests [] = return True
-runAllTests (test@Test{..}:xs) = do 
+runAllTests (test@Test {..}:xs) = do
   thisResult <- runTest test
   otherResult <- runAllTests xs
+  if not thisResult
+    then putStrLn ("Failed " ++ name)
+    else putStrLn ("Passed " ++ name)
   return (thisResult && otherResult)
 
 doNothing :: GameState -> IO GameState
