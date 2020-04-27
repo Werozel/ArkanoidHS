@@ -29,7 +29,7 @@ data BricksGrid = BricksGrid {
 }
 
 -- Result of a game
-data Result = Win | Lose | NoTime | NotFinished deriving Eq
+data Result = Win | Lose | NoTime | NotFinished deriving (Eq, Show)
 -- Текущее меню или уровень
 data View = MainMenu | ResultsMenu | SettingsMenu | LevelView | StartScreen | Pause | Menu | WinView | LoseView | Exit deriving Eq
 
