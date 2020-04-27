@@ -34,6 +34,7 @@ main = do
 runAllTests :: [Test] -> IO Bool
 runAllTests [] = return True
 runAllTests (test@Test {..}:xs) = do
+  print ("Started " ++ name)
   thisResult <- runTest test
   otherResult <- runAllTests xs
   if not thisResult
@@ -51,8 +52,11 @@ runTest :: Test -> IO Bool
 runTest test@Test {..}
   | tickCount >= tickLimit = return (checkSuccess test)
   | otherwise = do
+    print ("Before " ++ show (ballDirection state) ++ " " ++ show (ballPos state) ++ " " ++ show (result state))
     newState <- tick 0 state
-    finalState <- testTick state
+    print ("Tick passed " ++ show (ballDirection newState) ++ " " ++ show (ballPos newState) ++ " " ++ show (lastHit (grid state)))
+    finalState <- testTick newState
+    print ("TestTick passed " ++ show (ballDirection finalState) ++ " " ++ show (ballPos finalState) ++ " ")
 --    if (not waitAll) and (checkSuccess test)
     if not waitAll && checkSuccess test
       then return True
