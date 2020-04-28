@@ -268,9 +268,7 @@ getName = do
 run :: IO()
 run = do
   gen <- getStdGen
---  name <- getName
+  name <- getName
 
   init <- initState name (fst (randomR randRange gen )) StartScreen
   playIO window bgColor fps init draw eventHandler tick
-  where 
-    name = "Cactiw"  -- TODO return back
