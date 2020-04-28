@@ -66,10 +66,22 @@ test-suite ArcanoidHS-test
   main-is: Spec.hs
   other-modules:
       Paths_ArcanoidHS
+      Test
+      BallDestroy
+      Lose
+      Win
+      SaveTest
+      TestConstants
   hs-source-dirs:
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       ArcanoidHS
-    , base >=4.7 && <5
+    , base >=4.7 && <5,
+    gloss,
+    time,
+    random,
+    fixed,
+    directory,
+    extra
   default-language: Haskell2010

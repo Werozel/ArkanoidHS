@@ -14,13 +14,13 @@ data Brick = Brick {
   position :: Point,
   size :: Point,
   hitsLeft :: Int
-} | NoBrick
+} | NoBrick deriving (Eq, Show)
 
 
 -- виды ударов по мячу
 data Hit = LeftHit | TopHit | RightHit | BottomHit |
            LeftTopHit | RightTopHit | LeftBottomHit | RightBottomHit |
-           NoHit | PlatformHit deriving Eq
+           NoHit | PlatformHit deriving (Eq, Show)
 -- Одна строка из сетки
 type BricksGridRow = [Brick]
 -- All bricks
@@ -30,7 +30,7 @@ data BricksGrid = BricksGrid {
 }
 
 -- Result of a game
-data Result = Win | Lose | NoTime | NotFinished deriving Eq
+data Result = Win | Lose | NoTime | NotFinished | TestSuccess deriving (Eq, Show)
 -- Текущее меню или уровень
 data View = MainMenu | ResultsMenu | SettingsMenu | LevelView | StartScreen | Pause | Menu | WinView | LoseView | Exit deriving Eq
 
