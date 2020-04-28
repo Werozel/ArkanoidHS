@@ -40,9 +40,9 @@ main = do
 runAllTests :: [Test] -> IO Bool
 runAllTests [] = return True
 runAllTests (test@Test {..}:xs) = do
-  print ("Started " ++ name)
   thisResult <- runTest test
   otherResult <- runAllTests xs
+  print ("Started " ++ name)
   if not thisResult
     then putStrLn ("Failed " ++ name)
     else putStrLn ("Passed " ++ name)
@@ -58,12 +58,8 @@ runTest :: Test -> IO Bool
 runTest test@Test {..}
   | tickCount >= tickLimit = return (checkSuccess test)
   | otherwise = do
---    print ("Before " ++ show (ballDirection state) ++ " " ++ show (ballPos state) ++ " " ++ show (result state))
     newState <- tick 0 state
---    print ("Tick passed " ++ show (ballDirection newState) ++ " " ++ show (ballPos newState) ++ " " ++ show (lastHit (grid state)))
     finalState <- testTick newState
---    print ("TestTick passed " ++ show (ballDirection finalState) ++ " " ++ show (ballPos finalState) ++ " ")
---    if (not waitAll) and (checkSuccess test)
     if not waitAll && checkSuccess test
       then return True
       else runTest test {state = finalState, tickCount = tickCount + 1}
@@ -73,3 +69,4 @@ runTest test@Test {..}
 -- Уничтожение блока (готово)
 -- Проигрыш (готово)
 -- Конец игры (выигрыш) (готово)
+-- Сохранение и загрузка статистики (готово)
