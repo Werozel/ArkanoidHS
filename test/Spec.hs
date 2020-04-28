@@ -8,6 +8,7 @@ import Lib
 import Constants
 import Base
 import Test
+import Lose
 
 import BallDestroy
 
@@ -16,7 +17,8 @@ getTests = do
   beginState <- initState "Test" 25 LevelView
   ballDestroyBeginState <- getBallDestroyBeginState
   return [ Test "Overall stability" beginState Run.tick 0 (testSeconds * fps) doNothing True gameNotCrashed,
-    Test "Brick destroy" ballDestroyBeginState Run.tick 0 (testSeconds * fps) setPosition False checkBlockDestroyed ]
+    Test "Brick destroy" ballDestroyBeginState Run.tick 0 (testSeconds * fps) setPosition False checkBlockDestroyed,
+    Test "Lose the game" beginState Run.tick 0 (testSeconds * fps) awayFromTheBall False checkLose ]
 
 
 main :: IO ()
@@ -64,7 +66,7 @@ runTest test@Test {..}
 
 
 -- Стабильность работы (готово)
--- Уничтожение блока
--- Проигрыш
+-- Уничтожение блока (готово)
+-- Проигрыш (готово)
 -- Конец игры (выигрыш)
 -- Сохранение + загрузка
