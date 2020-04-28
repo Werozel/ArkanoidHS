@@ -87,6 +87,8 @@ jobs:
         stack build
     - name : Test
       run : |
+        mkdir saves
+        touch saves/results.txt
         stack test
       env:
         ARGS: ${{ matrix.plan.resolver }}
