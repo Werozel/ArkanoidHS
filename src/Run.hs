@@ -280,6 +280,7 @@ getName = do
 run :: IO()
 run = do
   gen <- getStdGen
+  createFile resultsFilePath
   names <- getNames
   let profilesStr = getProfileStr 0 names
   putStrLn "Choose a profile:"
