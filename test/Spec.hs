@@ -9,6 +9,7 @@ import Constants
 import Base
 import Test
 import Lose
+import Win
 
 import BallDestroy
 
@@ -18,7 +19,8 @@ getTests = do
   ballDestroyBeginState <- getBallDestroyBeginState
   return [ Test "Overall stability" beginState Run.tick 0 (testSeconds * fps) doNothing True gameNotCrashed,
     Test "Brick destroy" ballDestroyBeginState Run.tick 0 (testSeconds * fps) setPosition False checkBlockDestroyed,
-    Test "Lose the game" beginState Run.tick 0 (testSeconds * fps) awayFromTheBall False checkLose ]
+    Test "Lose the game" beginState Run.tick 0 (testSeconds * fps) awayFromTheBall False checkLose,
+    Test "Win the game" beginState Run.tick 0 (testSeconds * fps * 200) followFromTheBall False checkWin ]
 
 
 main :: IO ()
@@ -54,11 +56,11 @@ runTest :: Test -> IO Bool
 runTest test@Test {..}
   | tickCount >= tickLimit = return (checkSuccess test)
   | otherwise = do
-    print ("Before " ++ show (ballDirection state) ++ " " ++ show (ballPos state) ++ " " ++ show (result state))
+--    print ("Before " ++ show (ballDirection state) ++ " " ++ show (ballPos state) ++ " " ++ show (result state))
     newState <- tick 0 state
-    print ("Tick passed " ++ show (ballDirection newState) ++ " " ++ show (ballPos newState) ++ " " ++ show (lastHit (grid state)))
+--    print ("Tick passed " ++ show (ballDirection newState) ++ " " ++ show (ballPos newState) ++ " " ++ show (lastHit (grid state)))
     finalState <- testTick newState
-    print ("TestTick passed " ++ show (ballDirection finalState) ++ " " ++ show (ballPos finalState) ++ " ")
+--    print ("TestTick passed " ++ show (ballDirection finalState) ++ " " ++ show (ballPos finalState) ++ " ")
 --    if (not waitAll) and (checkSuccess test)
     if not waitAll && checkSuccess test
       then return True
@@ -69,4 +71,3 @@ runTest test@Test {..}
 -- Уничтожение блока (готово)
 -- Проигрыш (готово)
 -- Конец игры (выигрыш)
--- Сохранение + загрузка
