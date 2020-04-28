@@ -10,21 +10,23 @@ import Base
 import Test
 import Lose
 import Win
+import SaveTest
 
 import BallDestroy
 
 getTests :: IO [Test]
 getTests = do
-  beginState <- initState "Test" 25 LevelView
+  beginState <- initState "TeSt" 25 LevelView
+  saveTestState <- saveTestInitState
   ballDestroyBeginState <- getBallDestroyBeginState
   return [ Test "Overall stability" beginState Run.tick 0 (testSeconds * fps) doNothing True gameNotCrashed,
     Test "Brick destroy" ballDestroyBeginState Run.tick 0 (testSeconds * fps) setPosition False checkBlockDestroyed,
     Test "Lose the game" beginState Run.tick 0 (testSeconds * fps) awayFromTheBall False checkLose,
-    Test "Win the game" beginState Run.tick 0 (testSeconds * fps * 200) followFromTheBall False checkWin ]
+    Test "Win the game" beginState Run.tick 0 (testSeconds * fps * 200) followFromTheBall False checkWin,
+    Test "Save and Load" saveTestState Run.tick 0 (testSeconds * fps) saveWhenTimeComes False checkCompleteSaveTest]
 
 
 main :: IO ()
--- main = putStrLn "Тестовый набор еще не реализован"
 main = do
   tests <- getTests
   res <- runAllTests tests
@@ -70,4 +72,4 @@ runTest test@Test {..}
 -- Стабильность работы (готово)
 -- Уничтожение блока (готово)
 -- Проигрыш (готово)
--- Конец игры (выигрыш)
+-- Конец игры (выигрыш) (готово)
