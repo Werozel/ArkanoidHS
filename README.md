@@ -1,5 +1,7 @@
 # ArkanoidHS
 
+![Tests](https://github.com/Werozel/ArkanoidHS/workflows/Haskell%20Stack%20Project%20CI/badge.svg)
+
 A simple haskell arcanoid game
 
 ## Requirements
